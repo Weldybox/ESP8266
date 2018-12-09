@@ -1,6 +1,6 @@
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
-#include <ArduinoJson.h>
+
 
 String host = "192.168.1.111:1880/data"; //Configuration de l'url HTTP pour POSTER les données
 
@@ -8,8 +8,8 @@ String host = "192.168.1.111:1880/data"; //Configuration de l'url HTTP pour POST
  * Configuration connexion au point d'accès Wifi
  */
  
-const char* ssid = "";
-const char* password = "";
+const char* ssid = "Livebox-8E6A";
+const char* password = "EC6364F7327751F195ECA47DAC";
 
 /*
  * Fonction qui POST les données en JSON
@@ -35,8 +35,6 @@ void setup() {
   Serial.begin(115200);
   WiFi.begin(ssid, password); //Connexion au Wifi
 
-  server.begin();
-  Serial.println("Serveur demarrer !");
   while (WiFi.status() != WL_CONNECTED) { //Attente que la carte soit connecté au WIFI
     delay(500);
     Serial.println("Waiting for connection");
