@@ -8,8 +8,8 @@ String host = "192.168.1.111:1880/data"; //Configuration de l'url HTTP pour POST
  * Configuration connexion au point d'accès Wifi
  */
  
-const char* ssid = "Livebox-8E6A";
-const char* password = "EC6364F7327751F195ECA47DAC";
+const char* ssid = "";
+const char* password = "";
 
 /*
  * Fonction qui POST les données en JSON
