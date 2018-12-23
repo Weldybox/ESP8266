@@ -74,7 +74,7 @@ void loop() {
 
 void SendData (int valMin, int valMax) {
   int difference = valMax - valMin;
-  resultatCurrentData = ((analogRead(data)-valMin)*100)/difference;
+  resultatCurrentData = 100-(((analogRead(data)-valMin)*100)/difference);
   const char* sendMessage = itoa (resultatCurrentData, buf, 10);
   client.publish("/data", sendMessage);
   Serial.println("envoyé");
