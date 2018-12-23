@@ -1,0 +1,479 @@
+[
+    {
+        "id": "908ecefa.5bcb78",
+        "type": "tab",
+        "label": "Data_Store",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "3b895da2.398662",
+        "type": "mqtt in",
+        "z": "908ecefa.5bcb78",
+        "name": "",
+        "topic": "/data",
+        "qos": "2",
+        "broker": "65bcbd40.10266c",
+        "x": 190,
+        "y": 220,
+        "wires": [
+            [
+                "b4b4db2a.e52a48",
+                "af8ea119.68c478",
+                "789b4e52.b397b"
+            ]
+        ]
+    },
+    {
+        "id": "b4b4db2a.e52a48",
+        "type": "ui_gauge",
+        "z": "908ecefa.5bcb78",
+        "name": "gauge_Humdité",
+        "group": "332c0746.082dd8",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "humidité",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#0cb103",
+            "#e6e600",
+            "#da0505"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 420,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "c87ba046.00fb48",
+        "type": "sqlite",
+        "z": "908ecefa.5bcb78",
+        "mydb": "6eeb9f59.c9b318",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 550,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "af8ea119.68c478",
+        "type": "function",
+        "z": "908ecefa.5bcb78",
+        "name": "Insertion",
+        "func": "var d = new Date();\nvar epoch = d.getTime();\nvar nepoch = epoch /1000;\n\nvar newMsg = {\n \"topic\": \"INSERT INTO `MoistureData` (`emplacement`,`device`,`value`,`epoch`) VALUES ('chambre','moisture',\"+ msg.payload + \" , \"+ nepoch + \" )\"\n}\n\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 400,
+        "y": 280,
+        "wires": [
+            [
+                "c87ba046.00fb48"
+            ]
+        ]
+    },
+    {
+        "id": "85b6a78.1072558",
+        "type": "function",
+        "z": "908ecefa.5bcb78",
+        "name": "SQLselect",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar nepoch = epoch/1000;\nvar fromdate = nepoch;\nvar enddate = nepoch;\nvar output = [];\nif (msg.topic == \"ajd\"){\n    enddate = nepoch-Day;\n    output.push({ topic: \"SELECT * FROM MoistureData WHERE emplacement='chambre' AND device='moisture' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"hier\"){\n    enddate = nepoch-2*Day;\n    output.push({ topic: \"SELECT * FROM MoistureData WHERE emplacement='chambre' AND device='moisture' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"week\"){\n    enddate = nepoch-Week;\n    output.push({ topic: \"SELECT * FROM MoistureData WHERE emplacement='chambre' AND device='moisture' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"/data\"){\n    enddate = nepoch-Day;\n    output.push({ topic: \"SELECT * FROM MoistureData WHERE emplacement='chambre' AND device='moisture' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\n/*else{\n    for (var property in msg.payload) {\n        if (msg.payload[property]){\n            switch (property) {\n                case \"today\":\n                    enddate = nepoch-Day;\n                    break;\n                case \"yestday\":\n                    enddate = nepoch-2*Day;\n                    break;\n                case \"week\":\n                    enddate = nepoch-Week;\n                    break;\n            }\n            }else{\n                output.push({ topic: \"SELECT * FROM Moisture_device WHERE place='chambre' AND sensor='moisture' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n            }\n        }\n}*/\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 470,
+        "y": 480,
+        "wires": [
+            [
+                "bc809299.b68268"
+            ]
+        ]
+    },
+    {
+        "id": "bc809299.b68268",
+        "type": "sqlite",
+        "z": "908ecefa.5bcb78",
+        "mydb": "6eeb9f59.c9b318",
+        "sql": "",
+        "name": "DB",
+        "x": 650,
+        "y": 480,
+        "wires": [
+            [
+                "502a5c62.ea4f2c"
+            ]
+        ]
+    },
+    {
+        "id": "ff009d7f.587af",
+        "type": "ui_chart",
+        "z": "908ecefa.5bcb78",
+        "name": "Chart",
+        "group": "f9e70af1.7051",
+        "order": 1,
+        "width": "17",
+        "height": "10",
+        "label": "Taux d'humidité de la plante",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "604800",
+        "cutout": "",
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": true,
+        "x": 890,
+        "y": 500,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "f7ecc5a1.2075c",
+        "type": "inject",
+        "z": "908ecefa.5bcb78",
+        "name": "Reset chart",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 870,
+        "y": 760,
+        "wires": [
+            [
+                "3b23e5f6.aea01a"
+            ]
+        ]
+    },
+    {
+        "id": "3b23e5f6.aea01a",
+        "type": "function",
+        "z": "908ecefa.5bcb78",
+        "name": "Empty payload",
+        "func": "msg.payload = [];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1100,
+        "y": 740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "502a5c62.ea4f2c",
+        "type": "function",
+        "z": "908ecefa.5bcb78",
+        "name": "Forme",
+        "func": "var series =[\"Taux d'humidit en %\", \"x\"];\nvar labels = [\"Labels\"];\nvar data = [];\n\nvar i, len, string;\n\nfor (i = 1, len = msg.payload.length, string = \"\"; i < len; i++) {\n    data.push({\"x\":msg.payload[i].timestamp, \"y\":Number(msg.payload[i].value)});\n}\n\ndata = [data];\n\nmsg.payload = [{series, data, labels}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 770,
+        "y": 480,
+        "wires": [
+            [
+                "ff009d7f.587af"
+            ]
+        ]
+    },
+    {
+        "id": "1e0536b4.c34e41",
+        "type": "ui_button",
+        "z": "908ecefa.5bcb78",
+        "name": "",
+        "group": "f9e70af1.7051",
+        "order": 2,
+        "width": "6",
+        "height": "1",
+        "passthru": false,
+        "label": "Aujourd'hui",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "clicked",
+        "payloadType": "str",
+        "topic": "ajd",
+        "x": 210,
+        "y": 480,
+        "wires": [
+            [
+                "85b6a78.1072558"
+            ]
+        ]
+    },
+    {
+        "id": "e11000dc.f08358",
+        "type": "openweathermap in",
+        "z": "908ecefa.5bcb78",
+        "name": "Météo",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "La Rochelle",
+        "country": "France",
+        "language": "fr",
+        "x": 190,
+        "y": 720,
+        "wires": [
+            [
+                "b2bb6abc.a8dd18",
+                "e633a7ea.388c6"
+            ]
+        ]
+    },
+    {
+        "id": "e5d51e8e.3c77a8",
+        "type": "ui_text",
+        "z": "908ecefa.5bcb78",
+        "group": "332c0746.082dd8",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "temp",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 590,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "b2bb6abc.a8dd18",
+        "type": "function",
+        "z": "908ecefa.5bcb78",
+        "name": "temp",
+        "func": "\nmsg.payload = msg.payload.tempc + \" C°\";\n\nreturn msg;\n//return [ msg.payload., null ];\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 410,
+        "y": 720,
+        "wires": [
+            [
+                "e5d51e8e.3c77a8"
+            ]
+        ]
+    },
+    {
+        "id": "f87a222f.1fa718",
+        "type": "ui_text",
+        "z": "908ecefa.5bcb78",
+        "group": "332c0746.082dd8",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "weather",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 600,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "e633a7ea.388c6",
+        "type": "function",
+        "z": "908ecefa.5bcb78",
+        "name": "weather",
+        "func": "msg.payload = msg.payload.detail;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 420,
+        "y": 760,
+        "wires": [
+            [
+                "f87a222f.1fa718"
+            ]
+        ]
+    },
+    {
+        "id": "15fce135.5e7bcf",
+        "type": "comment",
+        "z": "908ecefa.5bcb78",
+        "name": "Data_receive",
+        "info": "Le bloc ci-dessous traite la requête reçus!",
+        "x": 210,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "25b1bcce.5af1ac",
+        "type": "comment",
+        "z": "908ecefa.5bcb78",
+        "name": "Bloc_APImétéo",
+        "info": "Bloc météo! API utilisé = Openweathermap",
+        "x": 220,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "3c5de2a1.cdb82e",
+        "type": "comment",
+        "z": "908ecefa.5bcb78",
+        "name": "Collecte_Database",
+        "info": "Bloc qui traite les données stockée dans la base de données",
+        "x": 230,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "c1aaa707.eacc08",
+        "type": "ui_button",
+        "z": "908ecefa.5bcb78",
+        "name": "",
+        "group": "f9e70af1.7051",
+        "order": 3,
+        "width": "6",
+        "height": "1",
+        "passthru": false,
+        "label": "Hier",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "hier",
+        "x": 190,
+        "y": 520,
+        "wires": [
+            [
+                "85b6a78.1072558"
+            ]
+        ]
+    },
+    {
+        "id": "b559789e.168448",
+        "type": "ui_button",
+        "z": "908ecefa.5bcb78",
+        "name": "",
+        "group": "f9e70af1.7051",
+        "order": 4,
+        "width": "6",
+        "height": "1",
+        "passthru": false,
+        "label": "Cette semaine",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "ajd",
+        "x": 220,
+        "y": 560,
+        "wires": [
+            [
+                "85b6a78.1072558"
+            ]
+        ]
+    },
+    {
+        "id": "789b4e52.b397b",
+        "type": "delay",
+        "z": "908ecefa.5bcb78",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "3",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 300,
+        "y": 340,
+        "wires": [
+            [
+                "85b6a78.1072558"
+            ]
+        ]
+    },
+    {
+        "id": "65bcbd40.10266c",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "FirstMosquitto",
+        "broker": "192.168.1.222",
+        "port": "2222",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "332c0746.082dd8",
+        "type": "ui_group",
+        "z": "",
+        "name": "Control",
+        "tab": "3e28d568.12486a",
+        "order": 1,
+        "disp": true,
+        "width": "7",
+        "collapse": false
+    },
+    {
+        "id": "6eeb9f59.c9b318",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "/home/pi/dbs/ConnectedHouse",
+        "mode": "RWC"
+    },
+    {
+        "id": "f9e70af1.7051",
+        "type": "ui_group",
+        "z": "",
+        "name": "Graphe",
+        "tab": "3e28d568.12486a",
+        "order": 2,
+        "disp": true,
+        "width": "18",
+        "collapse": false
+    },
+    {
+        "id": "3e28d568.12486a",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Vicky",
+        "icon": "dashboard",
+        "order": 2
+    }
+]
