@@ -6,8 +6,8 @@ char buf[20];
 int resultatCurrentData = 0;
 int iteration = 3600;
 
-const char* ssid = "Livebox-8E6A";
-const char* password = "EC6364F7327751F195ECA47DAC";
+const char* ssid = "";
+const char* password = "";
 const char* mqtt_server = "192.168.1.222";
 
 WiFiClient espClient;
