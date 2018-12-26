@@ -5,16 +5,18 @@ int data = A0;
 char buf[20];
 int resultatCurrentData = 0;
 int iteration = 3600;
+int LEDv = D1;
+int LEDo = D2;
+int buzzer = D6;
 
-const char* ssid = "";
-const char* password = "";
+const char* ssid = "Livebox-8E6A";
+const char* password = "EC6364F7327751F195ECA47DAC";
 const char* mqtt_server = "192.168.1.222";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 
 void setup_wifi() {
-
   delay(10);
   // We start by connecting to a WiFi network
   Serial.println();
@@ -24,11 +26,11 @@ void setup_wifi() {
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
+    delay(10);
     Serial.print(".");
   }
 
-  randomSeed(micros());
+  //randomSeed(micros());
 
   Serial.println("");
   Serial.println("WiFi connected");
@@ -37,6 +39,12 @@ void setup_wifi() {
 }
 
 void setup() {
+  pinMode(LEDv, OUTPUT);
+  pinMode(LEDo, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+  
+  digitalWrite(LEDv, LOW);
+  digitalWrite(LEDo, HIGH);
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, 2222);
@@ -73,5 +81,28 @@ void SendData (int valMin, int valMax) {
   const char* sendMessage = itoa (resultatCurrentData, buf, 10);
   client.publish("/sensor/plante/humidity", sendMessage);
   Serial.println("envoyé");
+  digitalWrite(LEDo, LOW);
+  for (int i = 0; i<5;i++)  {
+    if (resultatCurrentData <= 10 && resultatCurrentData > 5){
+      tone(buzzer, 2000, 1000);
+      delay(100);
+      noTone(buzzer);
+    }else if (resultatCurrentData <= 20 && resultatCurrentData > 10){
+      tone(buzzer, 1000, 100);
+      delay(300);
+      noTone(buzzer);
+    }
+    digitalWrite(LEDv, HIGH);
+    delay(100);
+    digitalWrite(LEDv, LOW);
+    delay(100);
+  }
+  if (resultatCurrentData <= 5){
+      tone(buzzer, 2000, 1000);
+      delay(5000);
+      noTone(buzzer);
+    }
+  
+  
   ESP.deepSleep(iteration*1000000);
 }
