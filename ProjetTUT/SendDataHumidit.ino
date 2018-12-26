@@ -1,4 +1,3 @@
-
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
@@ -50,12 +49,8 @@ void setup() {
   // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    String clientId = "ESP8266Client-";
-    clientId += String(random(0xffff), HEX);
-    if (client.connect(clientId.c_str())) {
+    if (client.connect("Vicky")) {
       Serial.println("connected");
-      client.publish("outTopic", "hello world");
-      client.subscribe("inTopic");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -76,7 +71,7 @@ void SendData (int valMin, int valMax) {
   int difference = valMax - valMin;
   resultatCurrentData = 100-(((analogRead(data)-valMin)*100)/difference);
   const char* sendMessage = itoa (resultatCurrentData, buf, 10);
-  client.publish("/data", sendMessage);
+  client.publish("/sensor/plante/humidity", sendMessage);
   Serial.println("envoyé");
   ESP.deepSleep(iteration*1000000);
 }
