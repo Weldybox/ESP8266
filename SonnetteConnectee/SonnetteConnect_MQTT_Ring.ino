@@ -28,7 +28,7 @@ void setup() {
   while (!client.connected()) {
     Serial.println("Connecting to MQTT...");
  
-    if (client.connect("ESP8266Client")) {
+    if (client.connect("Sonnette1")) {
  
       Serial.println("connected");  
  
