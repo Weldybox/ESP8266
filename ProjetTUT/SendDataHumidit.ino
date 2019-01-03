@@ -1,4 +1,3 @@
-
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
@@ -6,16 +5,18 @@ int data = A0;
 char buf[20];
 int resultatCurrentData = 0;
 int iteration = 3600;
+int LEDv = D1;
+int LEDo = D2;
+int buzzer = D6;
 
 const char* ssid = "";
 const char* password = "";
-const char* mqtt_server = "192.168.1.111";
+const char* mqtt_server = "192.168.1.222";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 
 void setup_wifi() {
-
   delay(10);
   // We start by connecting to a WiFi network
   Serial.println();
@@ -25,11 +26,11 @@ void setup_wifi() {
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
+    delay(10);
     Serial.print(".");
   }
 
-  randomSeed(micros());
+  //randomSeed(micros());
 
   Serial.println("");
   Serial.println("WiFi connected");
@@ -38,6 +39,12 @@ void setup_wifi() {
 }
 
 void setup() {
+  pinMode(LEDv, OUTPUT);
+  pinMode(LEDo, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+  
+  digitalWrite(LEDv, LOW);
+  digitalWrite(LEDo, HIGH);
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, 2222);
@@ -50,12 +57,8 @@ void setup() {
   // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    String clientId = "ESP8266Client-";
-    clientId += String(random(0xffff), HEX);
-    if (client.connect(clientId.c_str())) {
+    if (client.connect("Vicky")) {
       Serial.println("connected");
-      client.publish("outTopic", "hello world");
-      client.subscribe("inTopic");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -76,7 +79,30 @@ void SendData (int valMin, int valMax) {
   int difference = valMax - valMin;
   resultatCurrentData = 100-(((analogRead(data)-valMin)*100)/difference);
   const char* sendMessage = itoa (resultatCurrentData, buf, 10);
-  client.publish("/data", sendMessage);
+  client.publish("/sensor/plante/humidity", sendMessage);
   Serial.println("envoyé");
+  digitalWrite(LEDo, LOW);
+  for (int i = 0; i<5;i++)  {
+    if (resultatCurrentData <= 10 && resultatCurrentData > 5){
+      tone(buzzer, 2000, 1000);
+      delay(100);
+      noTone(buzzer);
+    }else if (resultatCurrentData <= 20 && resultatCurrentData > 10){
+      tone(buzzer, 1000, 100);
+      delay(300);
+      noTone(buzzer);
+    }
+    digitalWrite(LEDv, HIGH);
+    delay(100);
+    digitalWrite(LEDv, LOW);
+    delay(100);
+  }
+  if (resultatCurrentData <= 5){
+      tone(buzzer, 2000, 1000);
+      delay(5000);
+      noTone(buzzer);
+    }
+  
+  
   ESP.deepSleep(iteration*1000000);
 }
