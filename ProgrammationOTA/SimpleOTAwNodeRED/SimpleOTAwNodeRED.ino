@@ -21,41 +21,38 @@ PubSubClient client(espClient);
 bool prog = true;
 uint16_t time_elapsed = 0;
 int LEDv = D1;
-//int LEDr = D2;
-//int Button = D3;
 char buf[20];
 
-void setup_wifi() {
-  delay(10);
-  // We start by connecting to a WiFi network
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(100);
-    Serial.print(".");
-  }
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-}
-
 void setup() {
-  
-  //pinMode(LEDr, OUTPUT);
-  pinMode(LEDv, OUTPUT);
-  //pinMode(Button, INPUT);
+ 
   Serial.begin(115200);
-  WiFi.mode(WIFI_STA);
-  setup_wifi();
+  pinMode(LEDv, OUTPUT);
+  WiFi.begin(ssid, password);
+ 
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.println("Connecting to WiFi..");
+  }
+  Serial.println("Connected to the WiFi network");
+ 
   client.setServer(mqtt_server, 2222);
-  //client.setCallback(callback);
-  
-  ArduinoOTA.onStart([]() {
+  client.setCallback(callback);
+ 
+  while (!client.connected()) {
+    Serial.println("Connecting to MQTT...");
+ 
+    if (client.connect("ESP8266SendReceive")) {
+ 
+      Serial.println("connected");  
+ 
+    } else {
+ 
+      Serial.print("failed with state ");
+      Serial.print(client.state());
+      delay(2000);
+ 
+    }
+    ArduinoOTA.onStart([]() {
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH) {
       type = "sketch";
@@ -87,17 +84,20 @@ void setup() {
     }
   });
   ArduinoOTA.begin();
-  
-  server.on("/prog",[](){
+  }
+
+   server.on("/prog",[](){
   server.send(200,"text/plain", "programming...");
   prog = true;
   time_elapsed = 0;
-  programming();
+  OTAprog();
   });
   server.begin();
-
+  
+  client.publish("/sensor/test/ack", "ok");
+  client.subscribe("/sensor/test");
+ 
 }
-
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -112,13 +112,26 @@ void reconnect() {
     }
   }
 }
+void callback(char* topic, byte* payload, unsigned int length) {
+ 
+  Serial.print("Message arrived in topic: ");
+  Serial.println(topic);
+ 
+  Serial.print("Message:");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+  Serial.println("-----------------------");
+}
+
 
 void loop() {
   
-server.handleClient();
- 
+ server.handleClient();
+ client.loop();
  digitalWrite(LEDv, !digitalRead(LEDv));
- delay(500);
+ delay(5000);
  //ESP.deepSleep(5000000);
 }
 
@@ -129,7 +142,7 @@ void SendDataACK () {
   client.publish("/sensor/test/ack", "ok");
   delay(100);
 }
-void programming(){
+void OTAprog(){
   if(prog)
   {
     uint16_t time_start = millis();
@@ -144,5 +157,4 @@ void programming(){
     digitalWrite(LEDv, LOW);
     prog = false;
 }
-  
 }
