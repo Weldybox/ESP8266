@@ -6,8 +6,8 @@
 #include <PubSubClient.h>
 
 #ifndef STASSID
-#define STASSID ""
-#define STAPSK  ""
+#define STASSID "Livebox-8E6A"
+#define STAPSK  "EC6364F7327751F195ECA47DAC"
 #endif
 
 const char* ssid = STASSID;
@@ -55,19 +55,6 @@ void setup() {
   client.setServer(mqtt_server, 2222);
   //client.setCallback(callback);
   
-  // Port defaults to 8266
-  // ArduinoOTA.setPort(8266);
-
-  // Hostname defaults to esp8266-[ChipID]
-  // ArduinoOTA.setHostname("myesp8266");
-
-  // No authentication by default
-  //ArduinoOTA.setPassword("admin");
-
-  // Password can be set with it's md5 value as well
-  //MD5(admin) = 21232f297a57a5a743894a0e4a801fc3
-//ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
-  
   ArduinoOTA.onStart([]() {
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH) {
@@ -105,6 +92,7 @@ void setup() {
   server.send(200,"text/plain", "programming...");
   prog = true;
   time_elapsed = 0;
+  programming();
   });
   server.begin();
 
@@ -126,6 +114,22 @@ void reconnect() {
 }
 
 void loop() {
+  
+server.handleClient();
+ 
+ digitalWrite(LEDv, !digitalRead(LEDv));
+ delay(500);
+ //ESP.deepSleep(5000000);
+}
+
+void SendDataACK () {
+    if (!client.connected()) {
+    reconnect();
+  }
+  client.publish("/sensor/test/ack", "ok");
+  delay(100);
+}
+void programming(){
   if(prog)
   {
     uint16_t time_start = millis();
@@ -140,16 +144,5 @@ void loop() {
     digitalWrite(LEDv, LOW);
     prog = false;
 }
-server.handleClient();
- 
- digitalWrite(LEDv, !digitalRead(LEDv));
- delay(500);
-}
-
-void SendDataACK () {
-    if (!client.connected()) {
-    reconnect();
-  }
-  client.publish("/sensor/test/ack", "ok");
-  delay(100);
+  
 }
