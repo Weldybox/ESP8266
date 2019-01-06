@@ -3,26 +3,58 @@
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
 #include <ESP8266WebServer.h>
+#include <PubSubClient.h>
 
-const char* ssid = "";
-const char* password = "";
+#ifndef STASSID
+#define STASSID ""
+#define STAPSK  ""
+#endif
+
+const char* ssid = STASSID;
+const char* password = STAPSK;
+const char* mqtt_server = "192.168.1.222";
+
 ESP8266WebServer server;
+WiFiClient espClient;
+PubSubClient client(espClient);
 
 bool prog = true;
 uint16_t time_elapsed = 0;
+int LEDv = D1;
+//int LEDr = D2;
+//int Button = D3;
+char buf[20];
+
+void setup_wifi() {
+  delay(10);
+  // We start by connecting to a WiFi network
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(100);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+}
 
 void setup() {
-  pinMode(D2, OUTPUT);
+  
+  //pinMode(LEDr, OUTPUT);
+  pinMode(LEDv, OUTPUT);
+  //pinMode(Button, INPUT);
   Serial.begin(115200);
-  Serial.println("Booting");
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.println("Connection Failed! Rebooting...");
-    delay(5000);
-    ESP.restart();
-  }
-
+  setup_wifi();
+  client.setServer(mqtt_server, 2222);
+  //client.setCallback(callback);
+  
   // Port defaults to 8266
   // ArduinoOTA.setPort(8266);
 
@@ -34,8 +66,8 @@ void setup() {
 
   // Password can be set with it's md5 value as well
   //MD5(admin) = 21232f297a57a5a743894a0e4a801fc3
-  //ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
-
+//ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
+  
   ArduinoOTA.onStart([]() {
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH) {
@@ -68,35 +100,56 @@ void setup() {
     }
   });
   ArduinoOTA.begin();
-  Serial.println("Ready");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
+  
+  server.on("/prog",[](){
+  server.send(200,"text/plain", "programming...");
+  prog = true;
+  time_elapsed = 0;
+  });
+  server.begin();
 
-server.on("/prog",[](){
-    server.send(200,"text/plain", "programming...");
-    prog = true;
-    time_elapsed = 0;
-});
-server.on("/ok",[](){
-    server.send(200,"text/plain", "ok");
-    prog = false;
-});
-
-server.begin();
 }
+
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    if (client.connect("testOTApost2")) {
+      Serial.println("connected");
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      delay(10);
+    }
+  }
+}
+
 void loop() {
   if(prog)
   {
     uint16_t time_start = millis();
     while(time_elapsed < 15000)
     {
+      digitalWrite(LEDv, HIGH);
       ArduinoOTA.handle();
       time_elapsed = millis()-time_start;
       delay(10);
     }
+    SendDataACK();
+    digitalWrite(LEDv, LOW);
     prog = false;
-  }
+}
 server.handleClient();
-digitalWrite(D2, !digitalRead(D2));
-delay(500);
+ 
+ digitalWrite(LEDv, !digitalRead(LEDv));
+ delay(500);
+}
+
+void SendDataACK () {
+    if (!client.connected()) {
+    reconnect();
+  }
+  client.publish("/sensor/test/ack", "ok");
+  delay(100);
 }
