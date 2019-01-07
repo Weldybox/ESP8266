@@ -6,8 +6,8 @@
 #include <PubSubClient.h>
 
 #ifndef STASSID
-#define STASSID "Livebox-8E6A"
-#define STAPSK  "EC6364F7327751F195ECA47DAC"
+#define STASSID ""
+#define STAPSK  ""
 #endif
 
 const char* ssid = STASSID;
@@ -20,6 +20,8 @@ PubSubClient client(espClient);
 
 bool prog = true;
 uint16_t time_elapsed = 0;
+uint16_t time_start = millis();
+int etatLEDv = 0;
 int LEDv = D1;
 char buf[20];
 
@@ -127,12 +129,26 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 
 void loop() {
-  
- server.handleClient();
- client.loop();
- digitalWrite(LEDv, !digitalRead(LEDv));
- delay(5000);
- //ESP.deepSleep(5000000);
+  time_start = millis();
+  etatLEDv += 1;
+  server.handleClient();
+  client.loop();
+  LEDvManage(etatLEDv);
+  time_elapsed = 0;
+  Serial.println(etatLEDv);
+}
+
+void LEDvManage (int etat){
+  while(time_elapsed < 1000){
+    int impair = etat % 2;
+    if (impair == 0){
+      digitalWrite(LEDv, HIGH);
+    }else{
+      digitalWrite(LEDv, LOW);
+    }
+    time_elapsed = millis()-time_start;
+  }
+  delay(10);
 }
 
 void SendDataACK () {
@@ -145,12 +161,12 @@ void SendDataACK () {
 void OTAprog(){
   if(prog)
   {
-    uint16_t time_start = millis();
+    uint16_t time_start2 = millis();
     while(time_elapsed < 15000)
     {
       digitalWrite(LEDv, HIGH);
       ArduinoOTA.handle();
-      time_elapsed = millis()-time_start;
+      time_elapsed = millis()-time_start2;
       delay(10);
     }
     SendDataACK();
