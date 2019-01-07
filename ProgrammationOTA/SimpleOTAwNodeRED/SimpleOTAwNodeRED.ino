@@ -3,40 +3,60 @@
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
 #include <ESP8266WebServer.h>
+#include <PubSubClient.h>
 
-const char* ssid = "Livebox-8E6A";
-const char* password = "EC6364F7327751F195ECA47DAC";
+#ifndef STASSID
+#define STASSID "Livebox-8E6A"
+#define STAPSK  "EC6364F7327751F195ECA47DAC"
+#endif
+
+const char* ssid = STASSID;
+const char* password = STAPSK;
+const char* mqtt_server = "192.168.1.222";
+
 ESP8266WebServer server;
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+unsigned long current = 0;
+unsigned long previous = 0;
+const long interval = 5000;
 
 bool prog = true;
 uint16_t time_elapsed = 0;
+int LEDv = D1;
+char buf[20];
 
 void setup() {
-  pinMode(D2, OUTPUT);
+ 
   Serial.begin(115200);
-  Serial.println("Booting");
-  WiFi.mode(WIFI_STA);
+  pinMode(LEDv, OUTPUT);
   WiFi.begin(ssid, password);
-  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.println("Connection Failed! Rebooting...");
-    delay(5000);
-    ESP.restart();
+ 
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.println("Connecting to WiFi..");
   }
-
-  // Port defaults to 8266
-  // ArduinoOTA.setPort(8266);
-
-  // Hostname defaults to esp8266-[ChipID]
-  // ArduinoOTA.setHostname("myesp8266");
-
-  // No authentication by default
-  //ArduinoOTA.setPassword("admin");
-
-  // Password can be set with it's md5 value as well
-  //MD5(admin) = 21232f297a57a5a743894a0e4a801fc3
-  //ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
-
-  ArduinoOTA.onStart([]() {
+  Serial.println("Connected to the WiFi network");
+ 
+  client.setServer(mqtt_server, 2222);
+  client.setCallback(callback);
+ 
+  while (!client.connected()) {
+    Serial.println("Connecting to MQTT...");
+ 
+    if (client.connect("ESP8266SendReceive")) {
+ 
+      Serial.println("connected");  
+ 
+    } else {
+ 
+      Serial.print("failed with state ");
+      Serial.print(client.state());
+      delay(2000);
+ 
+    }
+    ArduinoOTA.onStart([]() {
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH) {
       type = "sketch";
@@ -68,35 +88,83 @@ void setup() {
     }
   });
   ArduinoOTA.begin();
-  Serial.println("Ready");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
+  }
 
-server.on("/prog",[](){
-    server.send(200,"text/plain", "programming...");
-    prog = true;
-    time_elapsed = 0;
-});
-server.on("/ok",[](){
-    server.send(200,"text/plain", "ok");
-    prog = false;
-});
-
-server.begin();
+   server.on("/prog",[](){
+  server.send(200,"text/plain", "programming...");
+  prog = true;
+  time_elapsed = 0;
+  OTAprog();
+  });
+  server.begin();
+  
+  client.publish("/sensor/test/ack", "ok");
+  client.subscribe("/sensor/test");
+ 
 }
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    if (client.connect("testOTApost2")) {
+      Serial.println("connected");
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      delay(10);
+    }
+  }
+}
+void callback(char* topic, byte* payload, unsigned int length) {
+ 
+  Serial.print("Message arrived in topic: ");
+  Serial.println(topic);
+ 
+  Serial.print("Message:");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+  Serial.println("-----------------------");
+}
+
+
 void loop() {
+  server.handleClient();
+  client.loop();
+  LEDvManage();
+}
+
+void LEDvManage (){
+  current = millis();
+  if (current - previous >= interval){
+    previous = current;
+    digitalWrite(LEDv, !digitalRead(LEDv));
+    delay(10);
+  }
+}
+
+void SendDataACK () {
+    if (!client.connected()) {
+    reconnect();
+  }
+  client.publish("/sensor/test/ack", "ok");
+  delay(100);
+}
+void OTAprog(){
   if(prog)
   {
     uint16_t time_start = millis();
     while(time_elapsed < 15000)
     {
+      digitalWrite(LEDv, HIGH);
       ArduinoOTA.handle();
       time_elapsed = millis()-time_start;
       delay(10);
     }
+    SendDataACK();
+    digitalWrite(LEDv, LOW);
     prog = false;
-  }
-server.handleClient();
-digitalWrite(D2, !digitalRead(D2));
-delay(500);
+}
 }
