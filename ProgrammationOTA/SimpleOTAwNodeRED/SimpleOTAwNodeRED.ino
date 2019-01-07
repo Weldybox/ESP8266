@@ -6,8 +6,8 @@
 #include <PubSubClient.h>
 
 #ifndef STASSID
-#define STASSID "Livebox-8E6A"
-#define STAPSK  "EC6364F7327751F195ECA47DAC"
+#define STASSID ""
+#define STAPSK  ""
 #endif
 
 const char* ssid = STASSID;
