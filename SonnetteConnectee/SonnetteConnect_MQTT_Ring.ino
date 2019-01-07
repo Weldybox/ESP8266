@@ -56,9 +56,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print((char)payload[i]);
   }
   if(payload[0] == '1'){
-    tone(buzzer, 1000, 500);
-    delay(1000);
-    noTone(buzzer);
+   for (int i =0; i <5; !i++){
+     tone(buzzer, 1000, 500);
+     delay(1000);
+     noTone(buzzer);
+   }
   }
  
   Serial.println();

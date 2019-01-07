@@ -1,0 +1,129 @@
+[
+    {
+        "id": "6860a260.151cf4",
+        "type": "tab",
+        "label": "Sonnette",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "7c57c644.6d78f8",
+        "type": "function",
+        "z": "6860a260.151cf4",
+        "name": "Insertion",
+        "func": "var d = new Date();\nvar epoch = d.getTime();\nvar nepoch = epoch /1000;\n\nvar newMsg = {\n \"topic\": \"INSERT INTO `Sonnette` (`emplacement`,`device`,`epoch`) VALUES ('rez-de-chaussée','sonnette1', \"+ nepoch + \" )\"\n}\n\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 540,
+        "y": 280,
+        "wires": [
+            [
+                "96aae068.a751b"
+            ]
+        ]
+    },
+    {
+        "id": "96aae068.a751b",
+        "type": "sqlite",
+        "z": "6860a260.151cf4",
+        "mydb": "12846145.93a77f",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 710,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5ca531d2.16041",
+        "type": "mqtt out",
+        "z": "6860a260.151cf4",
+        "name": "",
+        "topic": "/sonnette/ring",
+        "qos": "",
+        "retain": "",
+        "broker": "a7605098.9b69e8",
+        "x": 560,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "4da31850.6e2b3",
+        "type": "ui_button",
+        "z": "6860a260.151cf4",
+        "name": "",
+        "group": "4d439d51.2d863c",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Sonner!",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "str",
+        "topic": "",
+        "x": 320,
+        "y": 340,
+        "wires": [
+            [
+                "5ca531d2.16041",
+                "7c57c644.6d78f8"
+            ]
+        ]
+    },
+    {
+        "id": "12846145.93a77f",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "/home/pi/dbs/MaisonCo",
+        "mode": "RWC"
+    },
+    {
+        "id": "a7605098.9b69e8",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "localhost:2222",
+        "broker": "localhost",
+        "port": "2222",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "4d439d51.2d863c",
+        "type": "ui_group",
+        "z": "",
+        "name": "Bouton",
+        "tab": "c28151.e3ae1eb",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "c28151.e3ae1eb",
+        "type": "ui_tab",
+        "z": "",
+        "name": "PanneauControl",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]
