@@ -1,63 +1,121 @@
 #include <ESP8266WiFi.h>
+#include <ESP8266mDNS.h>
+#include <WiFiUdp.h>
+#include <ArduinoOTA.h>
+#include <ESP8266WebServer.h>
 #include <PubSubClient.h>
 
-int data = A0;
-char buf[20];
-int resultatCurrentData = 0;
-int iteration = 3600;
-int LEDv = D1;
-int LEDo = D2;
-int buzzer = D6;
+#ifndef STASSID
+#define STASSID ""
+#define STAPSK  ""
+#endif
 
-const char* ssid = "";
-const char* password = "";
+String Vmax;
+
+const char* ssid = STASSID;
+const char* password = STAPSK;
 const char* mqtt_server = "192.168.1.222";
 
+ESP8266WebServer server;
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-void setup_wifi() {
-  delay(10);
-  // We start by connecting to a WiFi network
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+unsigned long current = 0;
+unsigned long previous = 0;
+int interval = 1000;
 
-  WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(10);
-    Serial.print(".");
-  }
-
-  //randomSeed(micros());
-
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-}
+bool prog = true;
+uint16_t time_elapsed = 0;
+int LEDv = D1;
+char buf[20];
 
 void setup() {
-  pinMode(LEDv, OUTPUT);
-  pinMode(LEDo, OUTPUT);
-  pinMode(buzzer, OUTPUT);
-  
-  digitalWrite(LEDv, LOW);
-  digitalWrite(LEDo, HIGH);
+ 
   Serial.begin(115200);
-  setup_wifi();
+  pinMode(LEDv, OUTPUT);
+  WiFi.begin(ssid, password);
+ 
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.println("Connecting to WiFi..");
+  }
+  Serial.println("Connected to the WiFi network");
+ 
   client.setServer(mqtt_server, 2222);
-  pinMode(data,OUTPUT);
+  client.setCallback(callback);
+ 
+  while (!client.connected()) {
+    Serial.println("Connecting to MQTT...");
+ 
+    if (client.connect("ESP8266SendReceive")) {
+ 
+      Serial.println("connected");  
+ 
+    } else {
+ 
+      Serial.print("failed with state ");
+      Serial.print(client.state());
+      delay(2000);
+ 
+    }
+    ArduinoOTA.onStart([]() {
+    String type;
+    if (ArduinoOTA.getCommand() == U_FLASH) {
+      type = "sketch";
+    } else { // U_SPIFFS
+      type = "filesystem";
+    }
+
+    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+    Serial.println("Start updating " + type);
+  });
+  ArduinoOTA.onEnd([]() {
+    Serial.println("\nEnd");
+  });
+  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+  });
+  ArduinoOTA.onError([](ota_error_t error) {
+    Serial.printf("Error[%u]: ", error);
+    if (error == OTA_AUTH_ERROR) {
+      Serial.println("Auth Failed");
+    } else if (error == OTA_BEGIN_ERROR) {
+      Serial.println("Begin Failed");
+    } else if (error == OTA_CONNECT_ERROR) {
+      Serial.println("Connect Failed");
+    } else if (error == OTA_RECEIVE_ERROR) {
+      Serial.println("Receive Failed");
+    } else if (error == OTA_END_ERROR) {
+      Serial.println("End Failed");
+    }
+  });
+  ArduinoOTA.begin();
+  }
+
+   server.on("/prog",[](){
+  server.send(200,"text/plain", "programming...");
+  prog = true;
+  time_elapsed = 0;
+  OTAprog();
+  });
+  
+  server.begin();
+  
+  Subinit();
+ 
 }
 
-/*
- * 
- */void reconnect() {
+void Subinit(){
+  client.subscribe("/BME");
+  client.subscribe("/BME/vmax");
+}
+
+void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    if (client.connect("Vicky")) {
+    if (client.connect("testOTApost2")) {
       Serial.println("connected");
     } else {
       Serial.print("failed, rc=");
@@ -67,42 +125,70 @@ void setup() {
     }
   }
 }
+void callback(char* topic, byte* payload, unsigned int length) {
+  String msg;
+  
+  for (int i = 0; i < length; i++) {
+    msg += (char)payload[i];
+}
+ 
+  if ((strcmp(topic,"/BME")==0) && msg == "ok"){
+    for(int i = 0; i<10; i++){
+      digitalWrite(LEDv, !digitalRead(LEDv));
+      delay(100);
+    }
+    Serial.println(msg);
+  }
+  else if(strcmp(topic,"/BME/vmax")==0){
+    interval = msg.toInt();
+    delay(10);
+    Serial.println(msg);
+  }
+}
 
 void loop() {
   if (!client.connected()) {
     reconnect();
   }
-  SendData(450, 800);
+  server.handleClient();
+  client.loop();
+  LEDvManage();
+  
 }
 
-void SendData (int valMin, int valMax) {
-  int difference = valMax - valMin;
-  resultatCurrentData = 100-(((analogRead(data)-valMin)*100)/difference);
-  const char* sendMessage = itoa (resultatCurrentData, buf, 10);
-  client.publish("/sensor/plante/humidity", sendMessage);
-  Serial.println("envoyé");
-  digitalWrite(LEDo, LOW);
-  for (int i = 0; i<5;i++)  {
-    if (resultatCurrentData <= 10 && resultatCurrentData > 5){
-      tone(buzzer, 2000, 1000);
-      delay(100);
-      noTone(buzzer);
-    }else if (resultatCurrentData <= 20 && resultatCurrentData > 10){
-      tone(buzzer, 1000, 100);
-      delay(300);
-      noTone(buzzer);
-    }
-    digitalWrite(LEDv, HIGH);
-    delay(100);
-    digitalWrite(LEDv, LOW);
-    delay(100);
+void LEDvManage (){
+  current = millis();
+  if (current - previous >= interval){
+    previous = current;
+    digitalWrite(LEDv, !digitalRead(LEDv));
+    delay(10);
+    
   }
-  if (resultatCurrentData <= 5){
-      tone(buzzer, 2000, 1000);
-      delay(5000);
-      noTone(buzzer);
+}
+
+void SendDataACK () {
+  if (!client.connected()) {
+    reconnect();
+  }
+  client.publish("/BME/prog/ack", "ok");
+  delay(100);
+  Subinit();
+}
+
+void OTAprog(){
+  if(prog)
+  {
+    uint16_t time_start = millis();
+    while(time_elapsed < 15000)
+    {
+      digitalWrite(LEDv, HIGH);
+      ArduinoOTA.handle();
+      time_elapsed = millis()-time_start;
+      delay(10);
     }
-  
-  
-  ESP.deepSleep(iteration*1000000);
+    SendDataACK();
+    digitalWrite(LEDv, LOW);
+    prog = false;
+  }
+    
 }
