@@ -4,11 +4,19 @@
 #include <ArduinoOTA.h>
 #include <ESP8266WebServer.h>
 #include <PubSubClient.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
 
 #ifndef STASSID
 #define STASSID ""
 #define STAPSK  ""
 #endif
+
+Adafruit_BME280 bme;
+
+String Vmax;
 
 const char* ssid = STASSID;
 const char* password = STAPSK;
@@ -20,7 +28,8 @@ PubSubClient client(espClient);
 
 unsigned long current = 0;
 unsigned long previous = 0;
-const long interval = 5000;
+int intervalLED = 1000;
+const long intervalBME = 900000;
 
 bool prog = true;
 uint16_t time_elapsed = 0;
@@ -28,6 +37,8 @@ int LEDv = D1;
 char buf[20];
 
 void setup() {
+  Wire.begin(2, 12);
+  Wire.setClock(100000);
  
   Serial.begin(115200);
   pinMode(LEDv, OUTPUT);
@@ -56,6 +67,14 @@ void setup() {
       delay(2000);
  
     }
+
+    bool status;
+    status = bme.begin(0x76);  
+    if (!status) {
+        Serial.println("Could not find a valid BME280 sensor, check wiring!");
+        while (1);
+    }
+    
     ArduinoOTA.onStart([]() {
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH) {
@@ -96,12 +115,18 @@ void setup() {
   time_elapsed = 0;
   OTAprog();
   });
+  
   server.begin();
   
-  client.publish("/sensor/test/ack", "ok");
-  client.subscribe("/sensor/test");
+  Subinit();
  
 }
+
+void Subinit(){
+  client.subscribe("/BME");
+  client.subscribe("/BME/vmax");
+}
+
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -117,41 +142,86 @@ void reconnect() {
   }
 }
 void callback(char* topic, byte* payload, unsigned int length) {
- 
-  Serial.print("Message arrived in topic: ");
-  Serial.println(topic);
- 
-  Serial.print("Message:");
+  String msg;
+  
   for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
-  }
-  Serial.println();
-  Serial.println("-----------------------");
+    msg += (char)payload[i];
 }
-
+ 
+  if ((strcmp(topic,"/BME")==0) && msg == "ok"){
+    for(int i = 0; i<10; i++){
+      digitalWrite(LEDv, !digitalRead(LEDv));
+      delay(100);
+    }
+    Serial.println(msg);
+  }
+  else if(strcmp(topic,"/BME/vmax")==0){
+    intervalLED = msg.toInt();
+    delay(10);
+    Serial.println(msg);
+  }
+}
 
 void loop() {
+  if (!client.connected()) {
+    reconnect();
+  }
   server.handleClient();
   client.loop();
-  LEDvManage();
+  Manage();
+ // ShowTemp();
 }
 
-void LEDvManage (){
+void ShowTemp (){/*
   current = millis();
-  if (current - previous >= interval){
+  Serial.println(previous);
+  if (current - previous >= intervalBME){
     previous = current;
+    int temp = bme.readTemperature();
+    Serial.println("msg BME envoyé");
+    Serial.print("température = ");
+    Serial.println(temp);
+    Serial.println();
+    const char* msg = itoa(temp,buf,10);
+    Serial.println(msg);
+    Serial.println();
+    client.publish("/BME/value", msg);
+    delay(10);
+  }*/
+}
+
+void Manage (){
+
+  current = millis();
+  if (current - previous >= intervalBME){
+    previous = current;
+
+    float temp = bme.readTemperature();
+    Serial.println("msg BME envoyé");
+    Serial.print("température = ");
+    Serial.println(temp);
+    Serial.println();
+    char tempX[5];
+    char* msg = dtostrf(temp, 4, 2, tempX);
+    Serial.println(msg);
+    Serial.println();
+    client.publish("/BME/value", msg);
+    delay(10);
+  }/*if (current - previous >= intervalLED){
     digitalWrite(LEDv, !digitalRead(LEDv));
     delay(10);
-  }
+  }*/
 }
 
 void SendDataACK () {
-    if (!client.connected()) {
+  if (!client.connected()) {
     reconnect();
   }
-  client.publish("/sensor/test/ack", "ok");
+  client.publish("/BME/prog/ack", "ok");
   delay(100);
+  Subinit();
 }
+
 void OTAprog(){
   if(prog)
   {
@@ -166,5 +236,6 @@ void OTAprog(){
     SendDataACK();
     digitalWrite(LEDv, LOW);
     prog = false;
-}
+  }
+    
 }
