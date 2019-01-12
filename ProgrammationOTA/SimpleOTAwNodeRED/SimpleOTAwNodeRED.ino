@@ -24,17 +24,14 @@
 /*
  * On définit le SSID et la clé WPA.
  */
-#ifndef STASSID
-#define STASSID ""
-#define STAPSK  ""
-#endif
 
 char tempX[5];
+bool automatic = false;
     
-String Vmax; //Définition la variable qui détermine la valeur max avant trigger
+float tempMAX; //Définition la variable qui détermine la valeur max avant trigger
 
-const char* ssid = STASSID;
-const char* password = STAPSK;
+const char* ssid = "Livebox-8E6A";
+const char* password = "EC6364F7327751F195ECA47DAC";
 const char* mqtt_server = "192.168.1.222";
 
 /*
@@ -57,6 +54,7 @@ const long intervalBME = 900000; //Interval de changement d'état du BME
 bool prog = true; //Définir la variable programmation true
 uint16_t time_elapsed = 0; //Définir le temps écoulé pour la programmation OTA
 int LEDv = D1; 
+int LEDr = D2;
 char buf[20]; //définition du buffer
 
 void setup() {
@@ -68,6 +66,8 @@ void setup() {
 
   Serial.begin(115200);
   pinMode(LEDv, OUTPUT);
+  pinMode(LEDr, OUTPUT);
+  digitalWrite(LEDr, LOW);
 
   /*
    * Initialisation du Wifi
@@ -154,6 +154,8 @@ void setup() {
   server.begin(); //On lance le serveur pour écouter l'arrivé d'éventuelle requête HTTP
   
   Subinit(); //Subinit définit tous les topic dans lesquels l'ESP doit s'abonner
+
+  client.publish("/BME/prog/ack", "ok");
  
 }
 
@@ -190,17 +192,24 @@ void callback(char* topic, byte* payload, unsigned int length) {
     msg += (char)payload[i]; //définition du message recus au topic X
 }
  
-  if ((strcmp(topic,"/BME")==0) && msg == "ok"){ //si le message reçus sur le topic /BME est ok
-    for(int i = 0; i<10; i++){
-      digitalWrite(LEDv, !digitalRead(LEDv)); //On fait clignoter les LED
-      delay(100);
+  if (strcmp(topic,"/BME")==0){ //si le message reçus sur le topic /BME est ok
+    if (msg == "on"){
+      for(int i = 0; i<10; i++){
+        digitalWrite(LEDv, !digitalRead(LEDv)); //On fait clignoter les LED
+        delay(100);
+      }
+      automatic = true;
+      //Serial.println(automatic);
+    }else{
+      automatic = false;
+      //Serial.println(automatic);
     }
     Serial.println(msg);
   }
   else if(strcmp(topic,"/BME/vmax")==0){ //Si un message est reçus sur le topic /BME/Vmax
-    intervalLED = msg.toInt(); //On change la valeure de la variable Vmax
+    tempMAX = msg.toFloat(); //On change la valeure de la variable Vmax
     delay(10);
-    Serial.println(msg);
+    Serial.println(tempMAX);
   }
 }
 
@@ -215,6 +224,22 @@ void loop() {
   client.loop(); //On écoute l'arrivée de message MQTT
   ManageLED(); //On regarde s'il faut clignoter les LED
   ManageBME(); //On regarde s'il faut envoyer un message MQTT vers le broker
+  Chauffage();
+}
+
+void Chauffage (){
+  if (automatic){
+    if (bme.readTemperature() < tempMAX){
+      digitalWrite(LEDr, HIGH);
+      delay(10);
+    }else{
+      digitalWrite(LEDr, LOW);
+      delay(10);
+    }
+  }else{
+    digitalWrite(LEDr, LOW);  
+    delay(10);
+  }
 }
 
 /*
@@ -226,7 +251,6 @@ void ManageBME (){
     previousBME = current;
     float hum = bme.readHumidity();
     float temp = bme.readTemperature();
-    
     char* msgTemp = dtostrf(temp, 4, 2, tempX);
     client.publish("/BME/temp", msgTemp); //On convertit puis on envoie les données au broker
     delay(10);
@@ -286,7 +310,8 @@ void OTAprog(){
       time_elapsed = millis()-time_start;
       delay(10);
     }
-    SendDataACK(); //Puis une fois finis on envoie un ACK au serveur MQTT
+    delay(10);
+    SendDataACK();
     digitalWrite(LEDv, LOW); //On éteint la LED
     prog = false; //On définie la variable de programmation à false
   } 
