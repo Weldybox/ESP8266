@@ -29,6 +29,8 @@
 #define STAPSK  ""
 #endif
 
+char tempX[5];
+    
 String Vmax; //Définition la variable qui détermine la valeur max avant trigger
 
 const char* ssid = STASSID;
@@ -222,16 +224,26 @@ void ManageBME (){
   current = millis();
   if (current - previousBME >= intervalBME){ //Si l'interval de temps correspond au temps entre previous et current
     previousBME = current;
+    float hum = bme.readHumidity();
     float temp = bme.readTemperature();
+    
+    char* msgTemp = dtostrf(temp, 4, 2, tempX);
+    client.publish("/BME/temp", msgTemp); //On convertit puis on envoie les données au broker
+    delay(10);
+
     Serial.println("msg BME envoyé");
     Serial.print("température = ");
     Serial.println(temp);
     Serial.println();
-    char tempX[5];
-    char* msg = dtostrf(temp, 4, 2, tempX);
-    Serial.println(msg);
+    
+    //char tempX[5];
+    char* msgHum = dtostrf(hum, 4, 2, tempX);
+    client.publish("/BME/hum", msgHum);
+
+    Serial.println("msg BME envoyé");
+    Serial.print("humidity = ");
+    Serial.println(hum);
     Serial.println();
-    client.publish("/BME/value", msg); //On convertit puis on envoie les données au broker
     delay(10);
   }
 }
