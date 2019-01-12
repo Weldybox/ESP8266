@@ -1,3 +1,15 @@
+/*
+* Code par Julfi fondateur de Weldybox
+* Version : 12/01/2019
+* 
+* Code d'interaction avec wemos d1 mini.
+* Intéraction MQTT (publish subscribe) Broker MQTT
+* Programmation OTA sur commande avec WebServeur
+* Intéraction MQTT et OTA contrôlable depuis Node-RED
+* 
+* Ce code fournis tous les X temps.
+*/
+
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
@@ -9,72 +21,90 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 
+/*
+ * On définit le SSID et la clé WPA.
+ */
 #ifndef STASSID
 #define STASSID ""
 #define STAPSK  ""
 #endif
 
-Adafruit_BME280 bme;
-
-String Vmax;
+String Vmax; //Définition la variable qui détermine la valeur max avant trigger
 
 const char* ssid = STASSID;
 const char* password = STAPSK;
 const char* mqtt_server = "192.168.1.222";
 
-ESP8266WebServer server;
-WiFiClient espClient;
-PubSubClient client(espClient);
+/*
+ * Définition des différents objets
+ */
+Adafruit_BME280 bme; //Objet bme pour gérer la librairie BME
+ESP8266WebServer server; //Création de l'objet sever qui sera notre serveur Web pour OTA
+WiFiClient espClient; //Création du client WIFI
+PubSubClient client(espClient); //Création de l'objet client pour gérer les messages MQTT
 
-unsigned long current = 0;
-unsigned long previous = 0;
-int intervalLED = 1000;
-const long intervalBME = 900000;
+/*
+ * Création des variables de gestions des delay
+ */
+unsigned long current = 0; //Nombre de secondes écoulés depuis le début
+unsigned long previousLED = 0; //Dernier indicateur de temps concernant le changemenet d'état de la LED
+unsigned long previousBME = 0; //Dernier indicateur de temps concernant le changement d'état du BME
+int intervalLED = 5000; //Interval de changement d'état de la LED
+const long intervalBME = 900000; //Interval de changement d'état du BME
 
-bool prog = true;
-uint16_t time_elapsed = 0;
-int LEDv = D1;
-char buf[20];
+bool prog = true; //Définir la variable programmation true
+uint16_t time_elapsed = 0; //Définir le temps écoulé pour la programmation OTA
+int LEDv = D1; 
+char buf[20]; //définition du buffer
 
 void setup() {
+  /*
+   * Début du Wire qui permet d'utiliser la connexion I2C avec le BME
+   */
   Wire.begin(2, 12);
   Wire.setClock(100000);
- 
+
   Serial.begin(115200);
   pinMode(LEDv, OUTPUT);
+
+  /*
+   * Initialisation du Wifi
+   */
   WiFi.begin(ssid, password);
- 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.println("Connecting to WiFi..");
   }
   Serial.println("Connected to the WiFi network");
- 
+
+ /*
+  * Initialisation du broker MQTT
+  */
   client.setServer(mqtt_server, 2222);
   client.setCallback(callback);
- 
   while (!client.connected()) {
     Serial.println("Connecting to MQTT...");
- 
-    if (client.connect("ESP8266SendReceive")) {
- 
+    if (client.connect("BMESensor")) { //On se connecte au broker avec l'identifiant BMEsensor
       Serial.println("connected");  
- 
     } else {
- 
       Serial.print("failed with state ");
       Serial.print(client.state());
       delay(2000);
- 
     }
 
+    /*
+     * Initialisation du lien I2C avec le BME
+     */
     bool status;
-    status = bme.begin(0x76);  
+    status = bme.begin(0x76);//L'adresse du couple de connecteur I2C
     if (!status) {
         Serial.println("Could not find a valid BME280 sensor, check wiring!");
         while (1);
     }
     
+    /*
+     * Initialisation d'OTA
+     */
     ArduinoOTA.onStart([]() {
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH) {
@@ -108,17 +138,20 @@ void setup() {
   });
   ArduinoOTA.begin();
   }
-
-   server.on("/prog",[](){
+  
+  /*
+   * Si l'event /prog est detecté, on lance la programmation OTA
+   */
+  server.on("/prog",[](){
   server.send(200,"text/plain", "programming...");
-  prog = true;
-  time_elapsed = 0;
-  OTAprog();
+  prog = true; //On définit la variable programmation à vrai
+  time_elapsed = 0; //Le temps écoulé à 0
+  OTAprog(); //On lance la fonction de programmation OTA
   });
   
-  server.begin();
+  server.begin(); //On lance le serveur pour écouter l'arrivé d'éventuelle requête HTTP
   
-  Subinit();
+  Subinit(); //Subinit définit tous les topic dans lesquels l'ESP doit s'abonner
  
 }
 
@@ -127,11 +160,14 @@ void Subinit(){
   client.subscribe("/BME/vmax");
 }
 
+/*
+ * Fonction reconnexion au broker MQTT
+ */
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    if (client.connect("testOTApost2")) {
+    if (client.connect("BMESensor")) {
       Serial.println("connected");
     } else {
       Serial.print("failed, rc=");
@@ -141,61 +177,51 @@ void reconnect() {
     }
   }
 }
+
+/*
+ * Fonction callback qui écoute l'arrivée d'éventuelles messages MQTT
+ */
 void callback(char* topic, byte* payload, unsigned int length) {
   String msg;
   
   for (int i = 0; i < length; i++) {
-    msg += (char)payload[i];
+    msg += (char)payload[i]; //définition du message recus au topic X
 }
  
-  if ((strcmp(topic,"/BME")==0) && msg == "ok"){
+  if ((strcmp(topic,"/BME")==0) && msg == "ok"){ //si le message reçus sur le topic /BME est ok
     for(int i = 0; i<10; i++){
-      digitalWrite(LEDv, !digitalRead(LEDv));
+      digitalWrite(LEDv, !digitalRead(LEDv)); //On fait clignoter les LED
       delay(100);
     }
     Serial.println(msg);
   }
-  else if(strcmp(topic,"/BME/vmax")==0){
-    intervalLED = msg.toInt();
+  else if(strcmp(topic,"/BME/vmax")==0){ //Si un message est reçus sur le topic /BME/Vmax
+    intervalLED = msg.toInt(); //On change la valeure de la variable Vmax
     delay(10);
     Serial.println(msg);
   }
 }
 
+/*
+ * Fonction client qui rassemble l'ensemble des fonctions d'écoutes et de managment.
+ */
 void loop() {
   if (!client.connected()) {
-    reconnect();
+    reconnect(); //Si le client n'est pas connecté alors on se reconnect
   }
-  server.handleClient();
-  client.loop();
-  Manage();
- // ShowTemp();
+  server.handleClient(); //On écoute l'arrivée de nouveaux messages du Webserver
+  client.loop(); //On écoute l'arrivée de message MQTT
+  ManageLED(); //On regarde s'il faut clignoter les LED
+  ManageBME(); //On regarde s'il faut envoyer un message MQTT vers le broker
 }
 
-void ShowTemp (){/*
+/*
+ * Fonction qui regarde s'il faut envoyer une donnée au broker
+ */
+void ManageBME (){
   current = millis();
-  Serial.println(previous);
-  if (current - previous >= intervalBME){
-    previous = current;
-    int temp = bme.readTemperature();
-    Serial.println("msg BME envoyé");
-    Serial.print("température = ");
-    Serial.println(temp);
-    Serial.println();
-    const char* msg = itoa(temp,buf,10);
-    Serial.println(msg);
-    Serial.println();
-    client.publish("/BME/value", msg);
-    delay(10);
-  }*/
-}
-
-void Manage (){
-
-  current = millis();
-  if (current - previous >= intervalBME){
-    previous = current;
-
+  if (current - previousBME >= intervalBME){ //Si l'interval de temps correspond au temps entre previous et current
+    previousBME = current;
     float temp = bme.readTemperature();
     Serial.println("msg BME envoyé");
     Serial.print("température = ");
@@ -205,14 +231,26 @@ void Manage (){
     char* msg = dtostrf(temp, 4, 2, tempX);
     Serial.println(msg);
     Serial.println();
-    client.publish("/BME/value", msg);
+    client.publish("/BME/value", msg); //On convertit puis on envoie les données au broker
     delay(10);
-  }/*if (current - previous >= intervalLED){
-    digitalWrite(LEDv, !digitalRead(LEDv));
-    delay(10);
-  }*/
+  }
 }
 
+/*
+ * Fonction qui détermine s'il faut faire clignoter la LED
+ */
+void ManageLED (){
+  current = millis();
+  if (current - previousLED >= intervalLED){ //Si le code est lancé depuis 1 seconde
+    previousLED = current;
+    digitalWrite(LEDv, !digitalRead(LEDv)); //Alors on fait clignoter la LED
+    delay(10);
+  }
+}
+
+/*
+ * Fonction qui envoie un accusé de reception une fois l'interval du programmation OTA est terminé
+ */
 void SendDataACK () {
   if (!client.connected()) {
     reconnect();
@@ -222,20 +260,22 @@ void SendDataACK () {
   Subinit();
 }
 
+/*
+ * Fonction qui met le programme en pause pendant 15 secondes et écoute l'arrivé de donnée.
+ */
 void OTAprog(){
   if(prog)
   {
     uint16_t time_start = millis();
-    while(time_elapsed < 15000)
+    while(time_elapsed < 15000) //Tant qu'il n'y a pas eu 15 secondes d'écoulé
     {
-      digitalWrite(LEDv, HIGH);
-      ArduinoOTA.handle();
+      digitalWrite(LEDv, HIGH); //La LED reste allumé
+      ArduinoOTA.handle(); //On écoute l'arrivé d'éventuel de code
       time_elapsed = millis()-time_start;
       delay(10);
     }
-    SendDataACK();
-    digitalWrite(LEDv, LOW);
-    prog = false;
-  }
-    
+    SendDataACK(); //Puis une fois finis on envoie un ACK au serveur MQTT
+    digitalWrite(LEDv, LOW); //On éteint la LED
+    prog = false; //On définie la variable de programmation à false
+  } 
 }
