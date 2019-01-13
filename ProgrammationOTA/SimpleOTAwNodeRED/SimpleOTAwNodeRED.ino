@@ -14,7 +14,6 @@
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
-#include <ESP8266WebServer.h>
 #include <PubSubClient.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -26,19 +25,18 @@
  */
 
 char tempX[5];
-bool automatic = false;
+bool automatic = false; //De base la carte n'est pas en mode automatic
     
 float tempMAX; //Définition la variable qui détermine la valeur max avant trigger
 
 const char* ssid = "Livebox-8E6A";
-const char* password = "";
+const char* password = "EC6364F7327751F195ECA47DAC";
 const char* mqtt_server = "192.168.1.222";
 
 /*
  * Définition des différents objets
  */
 Adafruit_BME280 bme; //Objet bme pour gérer la librairie BME
-ESP8266WebServer server; //Création de l'objet sever qui sera notre serveur Web pour OTA
 WiFiClient espClient; //Création du client WIFI
 PubSubClient client(espClient); //Création de l'objet client pour gérer les messages MQTT
 
@@ -48,10 +46,12 @@ PubSubClient client(espClient); //Création de l'objet client pour gérer les me
 unsigned long current = 0; //Nombre de secondes écoulés depuis le début
 unsigned long previousLED = 0; //Dernier indicateur de temps concernant le changemenet d'état de la LED
 unsigned long previousBME = 0; //Dernier indicateur de temps concernant le changement d'état du BME
+unsigned long previousChauf = 0;
+int intervalChauf = 180000;
 int intervalLED = 5000; //Interval de changement d'état de la LED
 const long intervalBME = 900000; //Interval de changement d'état du BME
 
-bool prog = true; //Définir la variable programmation true
+bool prog = false; //Définir la variable programmation true
 uint16_t time_elapsed = 0; //Définir le temps écoulé pour la programmation OTA
 int LEDv = D1; 
 int LEDr = D2;
@@ -140,19 +140,7 @@ void setup() {
   });
   ArduinoOTA.begin();
   }
-  
-  /*
-   * Si l'event /prog est detecté, on lance la programmation OTA
-   */
-  server.on("/prog",[](){
-  server.send(200,"text/plain", "programming...");
-  prog = true; //On définit la variable programmation à vrai
-  time_elapsed = 0; //Le temps écoulé à 0
-  OTAprog(); //On lance la fonction de programmation OTA
-  });
-  
-  server.begin(); //On lance le serveur pour écouter l'arrivé d'éventuelle requête HTTP
-  
+
   Subinit(); //Subinit définit tous les topic dans lesquels l'ESP doit s'abonner
 
   client.publish("/BME/prog/ack", "ok");
@@ -162,6 +150,7 @@ void setup() {
 void Subinit(){
   client.subscribe("/BME");
   client.subscribe("/BME/vmax");
+  client.subscribe("/BME/prog");
 }
 
 /*
@@ -211,6 +200,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
     delay(10);
     Serial.println(tempMAX);
   }
+  else if(strcmp(topic,"/BME/prog")==0){
+    prog = true;
+    delay(10);
+  }
 }
 
 /*
@@ -220,24 +213,36 @@ void loop() {
   if (!client.connected()) {
     reconnect(); //Si le client n'est pas connecté alors on se reconnect
   }
-  server.handleClient(); //On écoute l'arrivée de nouveaux messages du Webserver
+  //server.handleClient(); //On écoute l'arrivée de nouveaux messages du Webserver
   client.loop(); //On écoute l'arrivée de message MQTT
   ManageLED(); //On regarde s'il faut clignoter les LED
   ManageBME(); //On regarde s'il faut envoyer un message MQTT vers le broker
-  Chauffage();
+  Chauffage(); //On fonction en mode automatic qui regarde s'il faut allumer le chauffage automatiquement
+  OTAprog(); //Chheck le mode programmation OTA a été enclenché
+  //SendVoltage();
 }
 
+/*
+ * Fonction qui détermine s'il faut allumer ou non le chauffage
+ */
 void Chauffage (){
-  if (automatic){
-    if (bme.readTemperature() < tempMAX){
-      digitalWrite(LEDr, HIGH);
-      delay(10);
-    }else{
-      digitalWrite(LEDr, LOW);
-      delay(10);
+  if (automatic){ //Si le système est en mode automatic
+    current = millis();
+    if (current - previousChauf >= intervalChauf){ //Si ça fait 2 minutes que le le programme est lancé
+      previousChauf = current;
+      Serial.println("test chauffage");
+       if (bme.readTemperature() < tempMAX){//On test la température pour savoir s'il faut activer le chauffage
+        Serial.println("Chauffage good");
+        digitalWrite(LEDr, HIGH); //Si oui on allume le chauffage
+        delay(10);
+      }else{
+        digitalWrite(LEDr, LOW); //Si non on éteint le chauffage.
+        delay(10);
+      }
+     }
     }
-  }else{
-    digitalWrite(LEDr, LOW);  
+    else{
+    digitalWrite(LEDr, LOW); //Si la wemos n'est pas en mode automatic alors la LED reste éteinte
     delay(10);
   }
 }
@@ -302,6 +307,7 @@ void SendDataACK () {
 void OTAprog(){
   if(prog)
   {
+    time_elapsed = 0;
     uint16_t time_start = millis();
     while(time_elapsed < 15000) //Tant qu'il n'y a pas eu 15 secondes d'écoulé
     {
@@ -316,3 +322,18 @@ void OTAprog(){
     prog = false; //On définie la variable de programmation à false
   } 
 }
+/*
+ * Fonction qui check le niveau de batterie
+ */
+ /*
+void SendVoltage () {
+  current = millis();
+  if (current - previousBME >= intervalBME){
+    previousBME = current;
+    int vcc = ESP.getVcc();
+    Serial.println(vcc);
+    const char* sendMessage = itoa (vcc, buf, 10);
+    client.publish("/BME/voltage", sendMessage);
+    Serial.println("envoyé");
+  }
+}*/
