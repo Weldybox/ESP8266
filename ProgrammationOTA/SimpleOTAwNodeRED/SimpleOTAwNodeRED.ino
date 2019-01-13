@@ -4,8 +4,11 @@
 * 
 * Code d'interaction avec wemos d1 mini.
 * Intéraction MQTT (publish subscribe) Broker MQTT
-* Programmation OTA sur commande avec WebServeur
+* Programmation OTA sur commande
 * Intéraction MQTT et OTA contrôlable depuis Node-RED
+* 
+* Contrôle de la température et de l'humidité d'une milieu
+* Différents modes de fonctionnements (Manuel, auto)
 * 
 * Ce code fournis tous les X temps.
 */
@@ -27,10 +30,10 @@
 char tempX[5];
 bool automatic = false; //De base la carte n'est pas en mode automatic
     
-float tempMAX; //Définition la variable qui détermine la valeur max avant trigger
+float tempMin; //Définition la variable qui détermine la valeur max avant trigger
 
 const char* ssid = "Livebox-8E6A";
-const char* password = "EC6364F7327751F195ECA47DAC";
+const char* password = "";
 const char* mqtt_server = "192.168.1.222";
 
 /*
@@ -149,8 +152,9 @@ void setup() {
 
 void Subinit(){
   client.subscribe("/BME");
-  client.subscribe("/BME/vmax");
+  client.subscribe("/BME/tempMin");
   client.subscribe("/BME/prog");
+  client.subscribe("/BME/chauffage");
 }
 
 /*
@@ -183,6 +187,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
  
   if (strcmp(topic,"/BME")==0){ //si le message reçus sur le topic /BME est ok
     if (msg == "on"){
+      /*
+       * LED clignotement
+       */
       for(int i = 0; i<10; i++){
         digitalWrite(LEDv, !digitalRead(LEDv)); //On fait clignoter les LED
         delay(100);
@@ -195,14 +202,29 @@ void callback(char* topic, byte* payload, unsigned int length) {
     }
     Serial.println(msg);
   }
-  else if(strcmp(topic,"/BME/vmax")==0){ //Si un message est reçus sur le topic /BME/Vmax
-    tempMAX = msg.toFloat(); //On change la valeure de la variable Vmax
+  else if(strcmp(topic,"/BME/tempMin")==0){ //Si un message est reçus sur le topic /BME/Vmax
+    tempMin = msg.toFloat(); //On change la valeure de la variable Vmax
     delay(10);
-    Serial.println(tempMAX);
+    Serial.println(tempMin);
   }
   else if(strcmp(topic,"/BME/prog")==0){
     prog = true;
     delay(10);
+  }else if(strcmp(topic,"/BME/chauffage")==0){
+    if(msg == "on"){
+      /*
+       * LED rouge clignotement
+       */
+      for(int i = 0; i<10; i++){
+        digitalWrite(LEDr, !digitalRead(LEDr)); //On fait clignoter les LED
+        delay(100);
+      }
+    }else{
+      for(int i = 0; i<10; i++){
+        digitalWrite(LEDr, !digitalRead(LEDr)); //On fait clignoter les LED
+        delay(200);
+      }
+    }
   }
 }
 
@@ -231,7 +253,7 @@ void Chauffage (){
     if (current - previousChauf >= intervalChauf){ //Si ça fait 2 minutes que le le programme est lancé
       previousChauf = current;
       Serial.println("test chauffage");
-       if (bme.readTemperature() < tempMAX){//On test la température pour savoir s'il faut activer le chauffage
+       if (bme.readTemperature() < tempMin){//On test la température pour savoir s'il faut activer le chauffage
         Serial.println("Chauffage good");
         digitalWrite(LEDr, HIGH); //Si oui on allume le chauffage
         delay(10);
