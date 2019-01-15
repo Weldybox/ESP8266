@@ -33,7 +33,7 @@ bool automatic = false; //De base la carte n'est pas en mode automatic
 float tempMin; //Définition la variable qui détermine la valeur max avant trigger
 
 const char* ssid = "Livebox-8E6A";
-const char* password = "";
+const char* password = "EC6364F7327751F195ECA47DAC";
 const char* mqtt_server = "192.168.1.222";
 
 /*
@@ -205,6 +205,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
   else if(strcmp(topic,"/BME/tempMin")==0){ //Si un message est reçus sur le topic /BME/Vmax
     tempMin = msg.toFloat(); //On change la valeure de la variable Vmax
     delay(10);
+    char* msgChar = dtostrf(tempMin, 4, 2, tempX);
+    SendDataACK("/BME/ack/tempMin",msgChar);
     Serial.println(tempMin);
   }
   else if(strcmp(topic,"/BME/prog")==0){
@@ -314,11 +316,11 @@ void ManageLED (){
 /*
  * Fonction qui envoie un accusé de reception une fois l'interval du programmation OTA est terminé
  */
-void SendDataACK () {
+void SendDataACK (const char* topic, const char* message) {
   if (!client.connected()) {
     reconnect();
   }
-  client.publish("/BME/prog/ack", "ok");
+  client.publish(topic, message);
   delay(100);
   Subinit();
 }
@@ -339,7 +341,6 @@ void OTAprog(){
       delay(10);
     }
     delay(10);
-    SendDataACK();
     digitalWrite(LEDv, LOW); //On éteint la LED
     prog = false; //On définie la variable de programmation à false
   } 
