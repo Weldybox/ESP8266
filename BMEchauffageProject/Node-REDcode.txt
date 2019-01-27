@@ -1,0 +1,1016 @@
+[
+    {
+        "id": "ca37eb77.f8c1b",
+        "type": "tab",
+        "label": "BME",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "30149df3.636002",
+        "type": "mqtt in",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "topic": "/BME/temp",
+        "qos": "0",
+        "broker": "a7605098.9b69e8",
+        "x": 160,
+        "y": 100,
+        "wires": [
+            [
+                "45504898.980d08",
+                "22e47553.595eca"
+            ]
+        ]
+    },
+    {
+        "id": "22e47553.595eca",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "Insertion_BMEtemp",
+        "func": "var d = new Date();\nvar epoch = d.getTime();\nvar nepoch = (epoch /1000)+3600;\nvar a = parseFloat(msg.payload);\n\nvar newMsg = {\n \"topic\": \"INSERT INTO `Temperature` (`emplacement`,`device`,`value`,`epoch`) VALUES ('chambre','temperature', \"+ a + \" , \"+ nepoch + \" )\"\n}\n\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 390,
+        "y": 100,
+        "wires": [
+            [
+                "ee25df8e.9f644"
+            ]
+        ]
+    },
+    {
+        "id": "ee25df8e.9f644",
+        "type": "sqlite",
+        "z": "ca37eb77.f8c1b",
+        "mydb": "12846145.93a77f",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 610,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1ffbbaa2.450925",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "SQLselect_BMEtemp",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar nepoch = (epoch/1000)+3605;\nvar fromdate = nepoch;\nvar enddate = 1547245700;\nvar output = [];\n\noutput.push({ topic: \"SELECT * FROM Temperature WHERE epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 940,
+        "y": 80,
+        "wires": [
+            [
+                "6b3c5e31.5c694"
+            ]
+        ]
+    },
+    {
+        "id": "6b3c5e31.5c694",
+        "type": "sqlite",
+        "z": "ca37eb77.f8c1b",
+        "mydb": "12846145.93a77f",
+        "sql": "",
+        "name": "DB",
+        "x": 1130,
+        "y": 80,
+        "wires": [
+            [
+                "9bc24b73.fff59"
+            ]
+        ]
+    },
+    {
+        "id": "9bc24b73.fff59",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "Forme",
+        "func": "var series =[\"Témperature : \", \"x\"];\nvar labels = [\"Labels\"];\nvar data = [];\n\nvar i, len, string;\n\nfor (i = 1, len = msg.payload.length, string = \"\"; i < len; i++) {\n    data.push({\"x\":msg.payload[i].timestamp, \"y\":Number(msg.payload[i].value)});\n}\n\ndata = [data];\n\nmsg.payload = [{series, data, labels}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1250,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "45504898.980d08",
+        "type": "ui_gauge",
+        "z": "ca37eb77.f8c1b",
+        "name": "gauge_température",
+        "group": "293ed831.f2ab88",
+        "order": 1,
+        "width": "6",
+        "height": "6",
+        "gtype": "gage",
+        "title": "Température",
+        "label": "units",
+        "format": "{{value}} C°",
+        "min": "5",
+        "max": "30",
+        "colors": [
+            "#4191e9",
+            "#e6e600",
+            "#da0505"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 400,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "6f64a66b.45c5b8",
+        "type": "mqtt in",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "topic": "/BME/hum",
+        "qos": "0",
+        "broker": "a7605098.9b69e8",
+        "x": 160,
+        "y": 260,
+        "wires": [
+            [
+                "be2ccaaf.fb4fa8",
+                "e0fab4ff.fbb4d",
+                "820947d0.68ada"
+            ]
+        ]
+    },
+    {
+        "id": "be2ccaaf.fb4fa8",
+        "type": "ui_gauge",
+        "z": "ca37eb77.f8c1b",
+        "name": "gauge_humidité",
+        "group": "293ed831.f2ab88",
+        "order": 6,
+        "width": "6",
+        "height": "6",
+        "gtype": "gage",
+        "title": "Humdité",
+        "label": "units",
+        "format": "{{value}} %",
+        "min": "0",
+        "max": "100",
+        "colors": [
+            "#ff2b2b",
+            "#e6e600",
+            "#004fdf"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 380,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "820947d0.68ada",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "Insertion_BMEhum",
+        "func": "var d = new Date();\nvar epoch = d.getTime();\nvar nepoch = (epoch /1000)+3600;\nvar a = parseFloat(msg.payload);\n\nvar newMsg = {\n \"topic\": \"INSERT INTO `AirHumidity` (`emplacement`,`device`,`value`,`epoch`) VALUES ('chambre','BMEhumidity', \"+ a + \" , \"+ nepoch + \" )\"\n}\n\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 390,
+        "y": 240,
+        "wires": [
+            [
+                "6afa6321.1d3624"
+            ]
+        ]
+    },
+    {
+        "id": "6afa6321.1d3624",
+        "type": "sqlite",
+        "z": "ca37eb77.f8c1b",
+        "mydb": "12846145.93a77f",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 610,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e0fab4ff.fbb4d",
+        "type": "delay",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "3",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 180,
+        "y": 420,
+        "wires": [
+            [
+                "e6568a28.4b9a08"
+            ]
+        ]
+    },
+    {
+        "id": "a5051b60.55cfc8",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "SQLselect_BMEHum",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar nepoch = (epoch/1000)+3605;\nvar fromdate = nepoch;\nvar enddate = 1547245700;\nvar output = [];\n\noutput.push({ topic: \"SELECT * FROM AirHumidity WHERE epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 940,
+        "y": 120,
+        "wires": [
+            [
+                "417dd016.83837"
+            ]
+        ]
+    },
+    {
+        "id": "417dd016.83837",
+        "type": "sqlite",
+        "z": "ca37eb77.f8c1b",
+        "mydb": "12846145.93a77f",
+        "sql": "",
+        "name": "DB",
+        "x": 1150,
+        "y": 120,
+        "wires": [
+            [
+                "eafe6705.25f0d8"
+            ]
+        ]
+    },
+    {
+        "id": "eafe6705.25f0d8",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "Forme",
+        "func": "var series =[\"Humidity % \", \"x\"];\nvar labels = [\"Labels\"];\nvar data = [];\n\nvar i, len, string;\n\nfor (i = 1, len = msg.payload.length, string = \"\"; i < len; i++) {\n    data.push({\"x\":msg.payload[i].timestamp, \"y\":Number(msg.payload[i].value)});\n}\n\ndata = [data];\n\nmsg.payload = [{series, data, labels}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1310,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b23371b1.916a1",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "SQLselect_BMEhum",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar nepoch = (epoch/1000)+3600;\nvar fromdate = nepoch+5;\nvar enddate = nepoch;\nvar output = [];\nif (msg.topic == \"ajd\"){\n    enddate = nepoch-Day;\n    output.push({ topic: \"SELECT * FROM AirHumidity WHERE emplacement='chambre' AND device='BMEhumidity' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"hier\"){\n    enddate = nepoch-2*Day;\n    output.push({ topic: \"SELECT * FROM AirHumidity WHERE emplacement='chambre' AND device='BMEhumidity' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"week\"){\n    enddate = nepoch-Week;\n    output.push({ topic: \"SELECT * FROM AirHumidity WHERE emplacement='chambre' AND device='BMEhumidity' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"forever\"){\n    enddate = nepoch-Day;\n    output.push({ topic: \"SELECT * FROM AirHumidity WHERE epoch >= \" + 1547245700 + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\n/*else{\n    for (var property in msg.payload) {\n        if (msg.payload[property]){\n            switch (property) {\n                case \"today\":\n                    enddate = nepoch-Day;\n                    break;\n                case \"yestday\":\n                    enddate = nepoch-2*Day;\n                    break;\n                case \"week\":\n                    enddate = nepoch-Week;\n                    break;\n            }\n            }else{\n                output.push({ topic: \"SELECT * FROM Moisture_device WHERE place='chambre' AND sensor='moisture' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n            }\n        }\n}*/\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 620,
+        "y": 540,
+        "wires": [
+            [
+                "497e0e8b.e14ea8"
+            ]
+        ]
+    },
+    {
+        "id": "497e0e8b.e14ea8",
+        "type": "sqlite",
+        "z": "ca37eb77.f8c1b",
+        "mydb": "12846145.93a77f",
+        "sql": "",
+        "name": "DB",
+        "x": 830,
+        "y": 540,
+        "wires": [
+            [
+                "61c4bf91.065c1"
+            ]
+        ]
+    },
+    {
+        "id": "2f8ed70e.ffeb38",
+        "type": "ui_button",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "group": "b771c3f4.ec855",
+        "order": 3,
+        "width": "6",
+        "height": "1",
+        "passthru": false,
+        "label": "Aujourd'hui",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4277f4",
+        "icon": "",
+        "payload": "clicked",
+        "payloadType": "str",
+        "topic": "ajd",
+        "x": 330,
+        "y": 480,
+        "wires": [
+            [
+                "b23371b1.916a1",
+                "9f7bed33.e53238"
+            ]
+        ]
+    },
+    {
+        "id": "422e9b2a.80d244",
+        "type": "ui_button",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "group": "b771c3f4.ec855",
+        "order": 4,
+        "width": "6",
+        "height": "1",
+        "passthru": false,
+        "label": "Hier",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4277f4",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "hier",
+        "x": 310,
+        "y": 520,
+        "wires": [
+            [
+                "b23371b1.916a1",
+                "9f7bed33.e53238"
+            ]
+        ]
+    },
+    {
+        "id": "890c6380.723758",
+        "type": "ui_button",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "group": "b771c3f4.ec855",
+        "order": 5,
+        "width": "6",
+        "height": "1",
+        "passthru": false,
+        "label": "Cette semaine",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4277f4",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "week",
+        "x": 340,
+        "y": 560,
+        "wires": [
+            [
+                "b23371b1.916a1",
+                "9f7bed33.e53238"
+            ]
+        ]
+    },
+    {
+        "id": "9f7bed33.e53238",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "SQLselect_BMEtemp",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar nepoch = (epoch/1000)+3600;\nvar fromdate = nepoch +5;\nvar enddate = nepoch;\nvar output = [];\nif (msg.topic == \"ajd\"){\n    enddate = nepoch-Day;\n    output.push({ topic: \"SELECT * FROM Temperature WHERE emplacement='chambre' AND device='temperature' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"hier\"){\n    enddate = nepoch-2*Day;\n    output.push({ topic: \"SELECT * FROM Temperature WHERE emplacement='chambre' AND device='temperature' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"week\"){\n    enddate = nepoch-Week;\n    output.push({ topic: \"SELECT * FROM Temperature WHERE emplacement='chambre' AND device='temperature' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"forever\"){\n    enddate = nepoch-Day;\n    output.push({ topic: \"SELECT * FROM Temperature WHERE emplacement='chambre' AND device='temperature' AND epoch >= \" + 1547245700 + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\n/*else{\n    for (var property in msg.payload) {\n        if (msg.payload[property]){\n            switch (property) {\n                case \"today\":\n                    enddate = nepoch-Day;\n                    break;\n                case \"yestday\":\n                    enddate = nepoch-2*Day;\n                    break;\n                case \"week\":\n                    enddate = nepoch-Week;\n                    break;\n            }\n            }else{\n                output.push({ topic: \"SELECT * FROM Moisture_device WHERE place='chambre' AND sensor='moisture' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n            }\n        }\n}*/\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 620,
+        "y": 480,
+        "wires": [
+            [
+                "d6b62ba7.b7a7c8"
+            ]
+        ]
+    },
+    {
+        "id": "d6b62ba7.b7a7c8",
+        "type": "sqlite",
+        "z": "ca37eb77.f8c1b",
+        "mydb": "12846145.93a77f",
+        "sql": "",
+        "name": "DB",
+        "x": 830,
+        "y": 480,
+        "wires": [
+            [
+                "dacca5fc.cafee"
+            ]
+        ]
+    },
+    {
+        "id": "6d9717ad.3fb288",
+        "type": "ui_chart",
+        "z": "ca37eb77.f8c1b",
+        "name": "Humidité",
+        "group": "b771c3f4.ec855",
+        "order": 1,
+        "width": "16",
+        "height": "6",
+        "label": "Croube humidité chambre",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "604800",
+        "cutout": "",
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": true,
+        "x": 1120,
+        "y": 540,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "61c4bf91.065c1",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "Forme",
+        "func": "var series =[\"Humidity % \", \"x\"];\nvar labels = [\"Labels\"];\nvar data = [];\n\nvar i, len, string;\n\nfor (i = 1, len = msg.payload.length, string = \"\"; i < len; i++) {\n    data.push({\"x\":msg.payload[i].timestamp, \"y\":Number(msg.payload[i].value)});\n}\n\ndata = [data];\n\nmsg.payload = [{series, data, labels}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 970,
+        "y": 540,
+        "wires": [
+            [
+                "6d9717ad.3fb288"
+            ]
+        ]
+    },
+    {
+        "id": "dacca5fc.cafee",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "Forme",
+        "func": "var series =[\"Témperature : \", \"x\"];\nvar labels = [\"Labels\"];\nvar data = [];\n\nvar i, len, string;\n\nfor (i = 1, len = msg.payload.length, string = \"\"; i < len; i++) {\n    data.push({\"x\":msg.payload[i].timestamp, \"y\":Number(msg.payload[i].value)});\n}\n\ndata = [data];\n\nmsg.payload = [{series, data, labels}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 970,
+        "y": 480,
+        "wires": [
+            [
+                "bf9d4fb9.82ccc"
+            ]
+        ]
+    },
+    {
+        "id": "bf9d4fb9.82ccc",
+        "type": "ui_chart",
+        "z": "ca37eb77.f8c1b",
+        "name": "Température",
+        "group": "b771c3f4.ec855",
+        "order": 2,
+        "width": "16",
+        "height": "6",
+        "label": "Courbe température chambre",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "10",
+        "ymax": "25",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "604800",
+        "cutout": "",
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": true,
+        "x": 1130,
+        "y": 480,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "e6568a28.4b9a08",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "SelectFOREVER",
+        "func": "msg.payload = \"clicked\";\nmsg.topic = \"forever\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 370,
+        "y": 420,
+        "wires": [
+            [
+                "9f7bed33.e53238",
+                "b23371b1.916a1"
+            ]
+        ]
+    },
+    {
+        "id": "62e03706.9e60f8",
+        "type": "ui_button",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "group": "4706d2e.e43e7ac",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Prog",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "programming...",
+        "payloadType": "str",
+        "topic": "",
+        "x": 130,
+        "y": 720,
+        "wires": [
+            [
+                "7470e9f4.ec647",
+                "42de1291.709e74",
+                "2fc91561.d4fdca"
+            ]
+        ]
+    },
+    {
+        "id": "42de1291.709e74",
+        "type": "ui_text",
+        "z": "ca37eb77.f8c1b",
+        "group": "4706d2e.e43e7ac",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "état : ",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 570,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "514807db.2e51b",
+        "type": "mqtt in",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "topic": "/BME/prog/ack/OTA",
+        "qos": "2",
+        "broker": "a7605098.9b69e8",
+        "x": 170,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7470e9f4.ec647",
+        "type": "mqtt out",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "topic": "/BME/prog",
+        "qos": "",
+        "retain": "",
+        "broker": "a7605098.9b69e8",
+        "x": 310,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "a1ebfaa9.69a0c8",
+        "type": "ui_switch",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "label": "AUTO",
+        "tooltip": "",
+        "group": "293ed831.f2ab88",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "style": "",
+        "onvalue": "on",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "off",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "x": 130,
+        "y": 1060,
+        "wires": [
+            [
+                "8a634153.d2206"
+            ]
+        ]
+    },
+    {
+        "id": "8a634153.d2206",
+        "type": "mqtt out",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "topic": "/BME",
+        "qos": "",
+        "retain": "",
+        "broker": "a7605098.9b69e8",
+        "x": 320,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "ac704f72.3eb9c",
+        "type": "mqtt out",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "topic": "/BME/tempMin",
+        "qos": "",
+        "retain": "",
+        "broker": "a7605098.9b69e8",
+        "x": 340,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "3758a66f.f34c9a",
+        "type": "ui_text",
+        "z": "ca37eb77.f8c1b",
+        "group": "293ed831.f2ab88",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "température limite = ",
+        "format": "{{msg.payload}} C°",
+        "layout": "row-left",
+        "x": 660,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "abd9adfc.7c4a48",
+        "type": "comment",
+        "z": "ca37eb77.f8c1b",
+        "name": "stockageTempBdD",
+        "info": "Partie qui gère le stockage de la température dans\nla BdD",
+        "x": 190,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "e10cc6cc.6b21a8",
+        "type": "comment",
+        "z": "ca37eb77.f8c1b",
+        "name": "stockageHumBdD",
+        "info": "Partie qui gère le stockage de l'humidité dans la\nBdD",
+        "x": 190,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "f7302b5b.5dab5",
+        "type": "comment",
+        "z": "ca37eb77.f8c1b",
+        "name": "affichageGrapheDonnées",
+        "info": "Partie qui gère la mise en forme des données sur\nl'interface user",
+        "x": 210,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "ee039567.dbde3",
+        "type": "comment",
+        "z": "ca37eb77.f8c1b",
+        "name": "OTAprog",
+        "info": "Partie qui gère la communication avec le BME pour\nla programmation OTA",
+        "x": 140,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "f3731bd0.8769c",
+        "type": "comment",
+        "z": "ca37eb77.f8c1b",
+        "name": "setTemplimite",
+        "info": "Partie qui gère la communication avec l'ESP pour\ndéfinir la température d'activation du chauffage",
+        "x": 150,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "be723a42.f9607",
+        "type": "comment",
+        "z": "ca37eb77.f8c1b",
+        "name": "switchAUTO",
+        "info": "Interrupteur qui permet de passer ou non l'ESP en\nmode automatiqie",
+        "x": 150,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "2e8e10c9.c4a588",
+        "type": "comment",
+        "z": "ca37eb77.f8c1b",
+        "name": "switchMANUEL",
+        "info": "Interrupteur pour manuellement allumer ou éteindre\nle chauffage",
+        "x": 160,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "2957b068.836828",
+        "type": "ui_switch",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "label": "ON/OFF chauffage",
+        "tooltip": "",
+        "group": "4706d2e.e43e7ac",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "style": "",
+        "onvalue": "on",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "off",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "x": 170,
+        "y": 1180,
+        "wires": [
+            [
+                "30bb92cc.53bebe"
+            ]
+        ]
+    },
+    {
+        "id": "30bb92cc.53bebe",
+        "type": "mqtt out",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "topic": "/BME/chauffage",
+        "qos": "0",
+        "retain": "",
+        "broker": "a7605098.9b69e8",
+        "x": 400,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "55ee2deb.0cdc9c",
+        "type": "openweathermap in",
+        "z": "ca37eb77.f8c1b",
+        "name": "Météo",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "Marans",
+        "country": "France",
+        "language": "fr",
+        "x": 130,
+        "y": 1340,
+        "wires": [
+            [
+                "60be9945.e60038"
+            ]
+        ]
+    },
+    {
+        "id": "c989db60.1c3708",
+        "type": "ui_text",
+        "z": "ca37eb77.f8c1b",
+        "group": "4706d2e.e43e7ac",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "température ext : ",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 570,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "60be9945.e60038",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "temp",
+        "func": "\nmsg.payload = msg.payload.tempc + \" C°\";\n\nreturn msg;\n//return [ msg.payload., null ];\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 350,
+        "y": 1340,
+        "wires": [
+            [
+                "c989db60.1c3708"
+            ]
+        ]
+    },
+    {
+        "id": "69f53e81.c836a8",
+        "type": "comment",
+        "z": "ca37eb77.f8c1b",
+        "name": "APImétéo",
+        "info": "APi qui affiche la température extérieur",
+        "x": 140,
+        "y": 1280,
+        "wires": []
+    },
+    {
+        "id": "d0855549.781678",
+        "type": "mqtt in",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "topic": "/BME/ack/tempMin",
+        "qos": "2",
+        "broker": "a7605098.9b69e8",
+        "x": 410,
+        "y": 840,
+        "wires": [
+            [
+                "3758a66f.f34c9a"
+            ]
+        ]
+    },
+    {
+        "id": "2fc91561.d4fdca",
+        "type": "delay",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "15",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 240,
+        "y": 760,
+        "wires": [
+            [
+                "46b48cfc.24c2dc"
+            ]
+        ]
+    },
+    {
+        "id": "46b48cfc.24c2dc",
+        "type": "function",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "func": "msg.payload = \"ok\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 410,
+        "y": 760,
+        "wires": [
+            [
+                "42de1291.709e74"
+            ]
+        ]
+    },
+    {
+        "id": "6e256e4.084741",
+        "type": "ui_slider",
+        "z": "ca37eb77.f8c1b",
+        "name": "",
+        "label": "Limite",
+        "tooltip": "",
+        "group": "293ed831.f2ab88",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "all",
+        "topic": "",
+        "min": "15",
+        "max": "25",
+        "step": 1,
+        "x": 150,
+        "y": 920,
+        "wires": [
+            [
+                "ac704f72.3eb9c"
+            ]
+        ]
+    },
+    {
+        "id": "a7605098.9b69e8",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "localhost:2222",
+        "broker": "localhost",
+        "port": "2222",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "12846145.93a77f",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "/home/pi/dbs/MaisonCo",
+        "mode": "RWC"
+    },
+    {
+        "id": "293ed831.f2ab88",
+        "type": "ui_group",
+        "z": "",
+        "name": "Indicateurs",
+        "tab": "84290470.5ad8a",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "b771c3f4.ec855",
+        "type": "ui_group",
+        "z": "",
+        "name": "Graphique",
+        "tab": "84290470.5ad8a",
+        "order": 2,
+        "disp": true,
+        "width": "18",
+        "collapse": false
+    },
+    {
+        "id": "4706d2e.e43e7ac",
+        "type": "ui_group",
+        "z": "",
+        "name": "Panneau de contrôle",
+        "tab": "84290470.5ad8a",
+        "order": 3,
+        "disp": true,
+        "width": "5",
+        "collapse": false
+    },
+    {
+        "id": "84290470.5ad8a",
+        "type": "ui_tab",
+        "z": "",
+        "name": "BME",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
