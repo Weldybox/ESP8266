@@ -47,11 +47,7 @@ PubSubClient client(espClient); //Création de l'objet client pour gérer les me
  * Création des variables de gestions des delay
  */
 unsigned long current = 0; //Nombre de secondes écoulés depuis le début
-unsigned long previousLED = 0; //Dernier indicateur de temps concernant le changemenet d'état de la LED
 unsigned long previousBME = 0; //Dernier indicateur de temps concernant le changement d'état du BME
-unsigned long previousChauf = 0;
-int intervalChauf = 180000;
-int intervalLED = 5000; //Interval de changement d'état de la LED
 const long intervalBME = 900000; //Interval de changement d'état du BME
 
 bool prog = false; //Définir la variable programmation true
