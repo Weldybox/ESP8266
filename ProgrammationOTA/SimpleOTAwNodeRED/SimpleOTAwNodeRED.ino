@@ -32,8 +32,8 @@ bool automatic = false; //De base la carte n'est pas en mode automatic
     
 float tempMin; //Définition la variable qui détermine la valeur max avant trigger
 
-const char* ssid = "Livebox-8E6A";
-const char* password = "EC6364F7327751F195ECA47DAC";
+const char* ssid = "";
+const char* password = "";
 const char* mqtt_server = "192.168.1.222";
 
 /*
