@@ -4,12 +4,12 @@
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 
-char auth[] = "a53d4bf5a8e14ef6aa4ae26330bc3405";
+char auth[] = "";
 int pos;
 // Your WiFi credentials.
 // Set password to "" for open networks.
-char ssid[] = "Livebox-8E6A";
-char pass[] = "EC6364F7327751F195ECA47DAC";
+char ssid[] = "";
+char pass[] = "";
 int current = 0;
 int interval = 1000;
 
