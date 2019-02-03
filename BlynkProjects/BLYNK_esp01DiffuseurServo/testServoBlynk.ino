@@ -43,12 +43,12 @@
 
 // You should get Auth Token in the Blynk App.
 // Go to the Project Settings (nut icon).
-char auth[] = "a54f2a511f1943f5885da6e5a7f3b8d8";
+char auth[] = "";
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-char ssid[] = "Livebox-8E6A";
-char pass[] = "EC6364F7327751F195ECA47DAC";
+char ssid[] = "";
+char pass[] = "";
 int current = 0;
 int interval = 1000;
 
