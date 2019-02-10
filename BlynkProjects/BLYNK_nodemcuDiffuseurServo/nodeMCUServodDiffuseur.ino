@@ -43,12 +43,12 @@
 
 // You should get Auth Token in the Blynk App.
 // Go to the Project Settings (nut icon).
-char auth[] = "a54f2a511f1943f5885da6e5a7f3b8d8";
+char auth[] = "";
 int pos;
 // Your WiFi credentials.
 // Set password to "" for open networks.
-char ssid[] = "Livebox-8E6A";
-char pass[] = "EC6364F7327751F195ECA47DAC";
+char ssid[] = "";
+char pass[] = "";
 
 
 Servo myservo;
@@ -56,35 +56,29 @@ Servo myservo;
 
 BLYNK_WRITE(V1)
 {
-  int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
-  // You can also use:
-  // String i = param.asStr();
-  // double d = param.asDouble();
-  //Serial.print("V1 Slider value is: ");
-  //Serial.println(pinValue);
-
+  int pinValue = param.asInt(); 
   if(pinValue == 1){
     for (int i = 0; i<2; i++){
-    for (pos = 90; pos <= 115; pos += 1) { // goes from 0 degrees to 180 degrees
+    for (pos = 90; pos <= 115; pos += 1) {
     // in steps of 1 degree
-      myservo.write(pos);              // tell servo to go to position in variable 'pos'
-      delay(5);                       // waits 15ms for the servo to reach the position
+      myservo.write(pos);           
+      delay(5);                      
     }
-    for (pos = 115; pos >= 90; pos -= 1) { // goes from 180 degrees to 0 degrees
-      myservo.write(pos);              // tell servo to go to position in variable 'pos'
-      delay(5);                       // waits 15ms for the servo to reach the position
+    for (pos = 115; pos >= 90; pos -= 1) {
+      myservo.write(pos);             
+      delay(5);                       
     }
     delay(200);
     }
   }else{
-        for (pos = 90; pos <= 115; pos += 1) { // goes from 0 degrees to 180 degrees
+        for (pos = 90; pos <= 115; pos += 1) {
     // in steps of 1 degree
-      myservo.write(pos);              // tell servo to go to position in variable 'pos'
-      delay(5);                       // waits 15ms for the servo to reach the position
+      myservo.write(pos);              
+      delay(5);                       
     }
-    for (pos = 115; pos >= 90; pos -= 1) { // goes from 180 degrees to 0 degrees
-      myservo.write(pos);              // tell servo to go to position in variable 'pos'
-      delay(5);                       // waits 15ms for the servo to reach the position
+    for (pos = 115; pos >= 90; pos -= 1) { 
+      myservo.write(pos);              
+      delay(5);                       
     }
     Serial.println("notcool");
     digitalWrite(2, LOW);
