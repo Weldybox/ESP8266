@@ -4,12 +4,10 @@
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 
-char auth[] = "a53d4bf5a8e14ef6aa4ae26330bc3405";
+char auth[] = "";
 int pos;
-// Your WiFi credentials.
-// Set password to "" for open networks.
-char ssid[] = "Livebox-8E6A";
-char pass[] = "EC6364F7327751F195ECA47DAC";
+char ssid[] = "";
+char pass[] = "";
 int current = 0;
 int interval = 1000;
 
@@ -19,26 +17,26 @@ Servo myservo2;
 
 
 void actionner(Servo test){
-  for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
-    test.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(5);                       // waits 15ms for the servo to reach the position
+  for (pos = 0; pos <= 180; pos += 1) { 
+    test.write(pos);//Le servo moteur tourne jusqu'à atteindre 180 degré        
+    delay(5);                       
   }
-  for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
-    test.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(5);                       // waits 15ms for the servo to reach the position
+  for (pos = 180; pos >= 0; pos -= 1) { 
+    test.write(pos); //Il revient à sa position initiale           
+    delay(5);                       
   }
 }
 
 
-BLYNK_WRITE(V2)
+BLYNK_WRITE(V2)//Fonction blynk qui surveille l'arrivée de trame sur le lien virtual "V2"
 {
-  int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
+  int pinValue = param.asInt(); 
 
   if(pinValue == 1){
-    actionner(myservo1);
+    actionner(myservo1); //Si le payload reçus est "1" alors on actionne le premier servo
     delay(10);
   }else{
-    actionner(myservo2);
+    actionner(myservo2); //Sinon on actionne le second servo
     delay(10);   
 }
 }
@@ -50,10 +48,9 @@ void setup()
   myservo1.attach(D1);
   myservo2.attach(D2);
   Blynk.begin(auth, ssid, pass);
-  //Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
 }
 
 void loop()
 {
-  Blynk.run();
+  Blynk.run(); //Fonction de blynk qui surveille si un requête est émise depuis le client
 }
