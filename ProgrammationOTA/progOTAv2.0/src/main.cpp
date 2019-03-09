@@ -2,9 +2,9 @@
 #include <ESP8266WiFi.h>
 #include <ArduinoOTA.h>
 
-const char* ssid = "Livebox-8E6A";
-const char* mdp = "EC6364F7327751F195ECA47DAC";
-//const char* otamdp = "Nasreddine";
+const char* ssid = "";
+const char* mdp = "";
+//const char* otamdp = "";
 const char* hostString = "WemosOTAv2.0";
 
 unsigned long previousMillis = 0;
