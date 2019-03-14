@@ -1,40 +1,232 @@
 [
     {
-        "id": "908ecefa.5bcb78",
+        "id": "639e9667.687fc8",
         "type": "tab",
-        "label": "Data_Store",
+        "label": "jardinConnecté",
         "disabled": false,
         "info": ""
     },
     {
-        "id": "3b895da2.398662",
-        "type": "mqtt in",
-        "z": "908ecefa.5bcb78",
+        "id": "83d3b7cc.a7429",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "MosquittoMQTT",
+        "broker": "192.168.15.1",
+        "port": "2222",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "e82b4ce4.a2f89",
+        "type": "ui_group",
+        "z": "",
+        "name": "Gauges en temps réel",
+        "tab": "ae4a15bd.028ea",
+        "order": 1,
+        "disp": true,
+        "width": "28",
+        "collapse": false
+    },
+    {
+        "id": "8081a54f.e4adf",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "/home/pi/dbs/JardinConnecte",
+        "mode": "RWC"
+    },
+    {
+        "id": "26b0787f.026c8",
+        "type": "ui_group",
+        "z": "",
+        "name": "Graphiques capteurs 1-moyenne",
+        "tab": "ae4a15bd.028ea",
+        "order": 4,
+        "disp": true,
+        "width": "14",
+        "collapse": false
+    },
+    {
+        "id": "ae4a15bd.028ea",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Jardin connecté",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "8ad67f6.34bc3",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-dark",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#5fcc53",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#097479",
+                    "value": "#5fcc53",
+                    "edited": true
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#5fcc53",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#96dd8e",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#555555",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#eeeeee",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#5fcc53",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "a55e2869.07e878",
+        "type": "ui_group",
+        "z": "",
+        "name": "Graphiques capteurs 2-3",
+        "tab": "ae4a15bd.028ea",
+        "order": 5,
+        "disp": true,
+        "width": "14",
+        "collapse": false
+    },
+    {
+        "id": "808ec955.b7b7c",
+        "type": "ui_group",
+        "z": "",
         "name": "",
-        "topic": "/data",
-        "qos": "2",
-        "broker": "65bcbd40.10266c",
-        "x": 190,
-        "y": 220,
+        "tab": "ae4a15bd.028ea",
+        "order": 2,
+        "disp": true,
+        "width": "28",
+        "collapse": false
+    },
+    {
+        "id": "e371a649.31dbe8",
+        "type": "ui_group",
+        "z": "",
+        "name": "Selection d'une date précise",
+        "tab": "ae4a15bd.028ea",
+        "order": 6,
+        "disp": true,
+        "width": "10",
+        "collapse": false
+    },
+    {
+        "id": "c5c83080.ba7118",
+        "type": "mqtt in",
+        "z": "639e9667.687fc8",
+        "name": "Capteur1-AP",
+        "topic": "JardinConnecte/humidity/data/capteur1",
+        "qos": "0",
+        "broker": "83d3b7cc.a7429",
+        "x": 170,
+        "y": 360,
         "wires": [
             [
-                "b4b4db2a.e52a48",
-                "af8ea119.68c478",
-                "789b4e52.b397b"
+                "797489a3.94a68",
+                "c970744d.de9118",
+                "8107edbf.abb5e8",
+                "c2f4210e.66d32"
             ]
         ]
     },
     {
-        "id": "b4b4db2a.e52a48",
+        "id": "797489a3.94a68",
         "type": "ui_gauge",
-        "z": "908ecefa.5bcb78",
-        "name": "gauge_Humdité",
-        "group": "332c0746.082dd8",
+        "z": "639e9667.687fc8",
+        "name": "gauge capteur 1",
+        "group": "e82b4ce4.a2f89",
         "order": 1,
-        "width": 0,
-        "height": 0,
+        "width": "8",
+        "height": "5",
         "gtype": "gage",
-        "title": "humidité",
+        "title": "humidité capteur 1",
         "label": "units",
         "format": "{{value}}",
         "min": 0,
@@ -46,81 +238,66 @@
         ],
         "seg1": "",
         "seg2": "",
-        "x": 420,
-        "y": 220,
+        "x": 740,
+        "y": 360,
         "wires": []
     },
     {
-        "id": "c87ba046.00fb48",
+        "id": "71f49cdc.809cfc",
         "type": "sqlite",
-        "z": "908ecefa.5bcb78",
-        "mydb": "6eeb9f59.c9b318",
+        "z": "639e9667.687fc8",
+        "mydb": "8081a54f.e4adf",
         "sqlquery": "msg.topic",
         "sql": "",
         "name": "DB",
-        "x": 550,
-        "y": 280,
+        "x": 970,
+        "y": 260,
         "wires": [
             []
         ]
     },
     {
-        "id": "af8ea119.68c478",
+        "id": "c970744d.de9118",
         "type": "function",
-        "z": "908ecefa.5bcb78",
-        "name": "Insertion",
-        "func": "var d = new Date();\nvar epoch = d.getTime();\nvar nepoch = epoch /1000;\n\nvar newMsg = {\n \"topic\": \"INSERT INTO `MoistureData` (`emplacement`,`device`,`value`,`epoch`) VALUES ('chambre','moisture',\"+ msg.payload + \" , \"+ nepoch + \" )\"\n}\n\nreturn newMsg;",
+        "z": "639e9667.687fc8",
+        "name": "InsertionC1",
+        "func": "var d = new Date();\nvar epoch = d.getTime();\nvar nepoch = (epoch /1000)+3600;\n\nvar newMsg = {\n \"topic\": \"INSERT INTO `HumidityTerre` (`emplacement`,`capteur`,`value`,`epoch`) VALUES ('1','humidity1',\"+ msg.payload + \" , \"+ nepoch + \" )\"\n}\n\nreturn newMsg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 400,
-        "y": 280,
+        "x": 510,
+        "y": 380,
         "wires": [
             [
-                "c87ba046.00fb48"
+                "71f49cdc.809cfc"
             ]
         ]
     },
     {
-        "id": "85b6a78.1072558",
+        "id": "e62e1ca2.797d7",
         "type": "function",
-        "z": "908ecefa.5bcb78",
-        "name": "SQLselect",
-        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar nepoch = epoch/1000;\nvar fromdate = nepoch;\nvar enddate = nepoch;\nvar output = [];\nif (msg.topic == \"ajd\"){\n    enddate = nepoch-Day;\n    output.push({ topic: \"SELECT * FROM MoistureData WHERE emplacement='chambre' AND device='moisture' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"hier\"){\n    enddate = nepoch-2*Day;\n    output.push({ topic: \"SELECT * FROM MoistureData WHERE emplacement='chambre' AND device='moisture' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"week\"){\n    enddate = nepoch-Week;\n    output.push({ topic: \"SELECT * FROM MoistureData WHERE emplacement='chambre' AND device='moisture' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"/data\"){\n    enddate = nepoch-Day;\n    output.push({ topic: \"SELECT * FROM MoistureData WHERE emplacement='chambre' AND device='moisture' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n}\n/*else{\n    for (var property in msg.payload) {\n        if (msg.payload[property]){\n            switch (property) {\n                case \"today\":\n                    enddate = nepoch-Day;\n                    break;\n                case \"yestday\":\n                    enddate = nepoch-2*Day;\n                    break;\n                case \"week\":\n                    enddate = nepoch-Week;\n                    break;\n            }\n            }else{\n                output.push({ topic: \"SELECT * FROM Moisture_device WHERE place='chambre' AND sensor='moisture' AND epoch >= \" + enddate + \" AND epoch <= \" + fromdate + \" ORDER BY timestamp\"});\n            }\n        }\n}*/\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
+        "z": "639e9667.687fc8",
+        "name": "SQLselectC1",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar Newepoch = (epoch/1000)+3600;\nvar output = [];\nif (msg.topic == \"ajd\"){\n    var enddate = Newepoch-Day;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='1' AND capteur='humidity1' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"hier\"){\n    var enddate = Newepoch-2*Day;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='1' AND capteur='humidity1' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"week\"){\n    var enddate = Newepoch-Week;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='1' AND capteur='humidity1' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"ever\"){\n    var enddate = Newepoch-Week;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='1' AND capteur='humidity1' AND epoch >= 930837600 AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}else{\n    var enddate = Newepoch-Day;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='1' AND capteur='humidity1' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\n\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
         "outputs": 1,
         "noerr": 0,
-        "x": 470,
-        "y": 480,
+        "x": 590,
+        "y": 700,
         "wires": [
             [
-                "bc809299.b68268"
+                "3b603cff.5fa7a4"
             ]
         ]
     },
     {
-        "id": "bc809299.b68268",
-        "type": "sqlite",
-        "z": "908ecefa.5bcb78",
-        "mydb": "6eeb9f59.c9b318",
-        "sql": "",
-        "name": "DB",
-        "x": 650,
-        "y": 480,
-        "wires": [
-            [
-                "502a5c62.ea4f2c"
-            ]
-        ]
-    },
-    {
-        "id": "ff009d7f.587af",
+        "id": "8e4fcfab.f61c08",
         "type": "ui_chart",
-        "z": "908ecefa.5bcb78",
-        "name": "Chart",
-        "group": "f9e70af1.7051",
+        "z": "639e9667.687fc8",
+        "name": "Graphique capteur 1",
+        "group": "26b0787f.026c8",
         "order": 1,
-        "width": "17",
-        "height": "10",
-        "label": "Taux d'humidité de la plante",
+        "width": "14",
+        "height": "8",
+        "label": "Graphique de l'humidité du capteur 1",
         "chartType": "line",
         "legend": "false",
         "xformat": "dd HH:mm",
@@ -146,70 +323,37 @@
             "#c5b0d5"
         ],
         "useOldStyle": true,
-        "x": 890,
-        "y": 500,
+        "x": 1100,
+        "y": 700,
         "wires": [
             [],
             []
         ]
     },
     {
-        "id": "f7ecc5a1.2075c",
-        "type": "inject",
-        "z": "908ecefa.5bcb78",
-        "name": "Reset chart",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 870,
-        "y": 760,
+        "id": "29e59a47.7ebede",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "FormeC1",
+        "func": "var series =[\"Taux d'humidité en %\", \"x\"];\nvar labels = [\"Labels\"];\nvar data = [];\n\nvar i, len, string;\n\nfor (i = 1, len = msg.payload.length, string = \"\"; i < len; i++) {\n    data.push({\"x\":msg.payload[i].timestamp, \"y\":Number(msg.payload[i].value)});\n}\n\ndata = [data];\n\nmsg.payload = [{series, data, labels}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 900,
+        "y": 700,
         "wires": [
             [
-                "3b23e5f6.aea01a"
+                "8e4fcfab.f61c08"
             ]
         ]
     },
     {
-        "id": "3b23e5f6.aea01a",
-        "type": "function",
-        "z": "908ecefa.5bcb78",
-        "name": "Empty payload",
-        "func": "msg.payload = [];\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 1100,
-        "y": 740,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "502a5c62.ea4f2c",
-        "type": "function",
-        "z": "908ecefa.5bcb78",
-        "name": "Forme",
-        "func": "var series =[\"Taux d'humidit en %\", \"x\"];\nvar labels = [\"Labels\"];\nvar data = [];\n\nvar i, len, string;\n\nfor (i = 1, len = msg.payload.length, string = \"\"; i < len; i++) {\n    data.push({\"x\":msg.payload[i].timestamp, \"y\":Number(msg.payload[i].value)});\n}\n\ndata = [data];\n\nmsg.payload = [{series, data, labels}];\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 770,
-        "y": 480,
-        "wires": [
-            [
-                "ff009d7f.587af"
-            ]
-        ]
-    },
-    {
-        "id": "1e0536b4.c34e41",
+        "id": "7eccad13.59399c",
         "type": "ui_button",
-        "z": "908ecefa.5bcb78",
-        "name": "",
-        "group": "f9e70af1.7051",
+        "z": "639e9667.687fc8",
+        "name": "ajdC1",
+        "group": "26b0787f.026c8",
         "order": 2,
-        "width": "6",
+        "width": "3",
         "height": "1",
         "passthru": false,
         "label": "Aujourd'hui",
@@ -220,136 +364,42 @@
         "payload": "clicked",
         "payloadType": "str",
         "topic": "ajd",
-        "x": 210,
-        "y": 480,
+        "x": 130,
+        "y": 700,
         "wires": [
             [
-                "85b6a78.1072558"
+                "e62e1ca2.797d7"
             ]
         ]
     },
     {
-        "id": "e11000dc.f08358",
-        "type": "openweathermap in",
-        "z": "908ecefa.5bcb78",
-        "name": "Météo",
-        "wtype": "current",
-        "lon": "",
-        "lat": "",
-        "city": "La Rochelle",
-        "country": "France",
-        "language": "fr",
-        "x": 190,
-        "y": 720,
-        "wires": [
-            [
-                "b2bb6abc.a8dd18",
-                "e633a7ea.388c6"
-            ]
-        ]
-    },
-    {
-        "id": "e5d51e8e.3c77a8",
-        "type": "ui_text",
-        "z": "908ecefa.5bcb78",
-        "group": "332c0746.082dd8",
-        "order": 4,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "temp",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "x": 590,
-        "y": 720,
-        "wires": []
-    },
-    {
-        "id": "b2bb6abc.a8dd18",
-        "type": "function",
-        "z": "908ecefa.5bcb78",
-        "name": "temp",
-        "func": "\nmsg.payload = msg.payload.tempc + \" C°\";\n\nreturn msg;\n//return [ msg.payload., null ];\n",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 410,
-        "y": 720,
-        "wires": [
-            [
-                "e5d51e8e.3c77a8"
-            ]
-        ]
-    },
-    {
-        "id": "f87a222f.1fa718",
-        "type": "ui_text",
-        "z": "908ecefa.5bcb78",
-        "group": "332c0746.082dd8",
-        "order": 5,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "weather",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "x": 600,
-        "y": 760,
-        "wires": []
-    },
-    {
-        "id": "e633a7ea.388c6",
-        "type": "function",
-        "z": "908ecefa.5bcb78",
-        "name": "weather",
-        "func": "msg.payload = msg.payload.detail;\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 420,
-        "y": 760,
-        "wires": [
-            [
-                "f87a222f.1fa718"
-            ]
-        ]
-    },
-    {
-        "id": "15fce135.5e7bcf",
+        "id": "86eb4863.447888",
         "type": "comment",
-        "z": "908ecefa.5bcb78",
-        "name": "Data_receive",
+        "z": "639e9667.687fc8",
+        "name": "Traitement des données entrantes",
         "info": "Le bloc ci-dessous traite la requête reçus!",
-        "x": 210,
-        "y": 120,
+        "x": 260,
+        "y": 20,
         "wires": []
     },
     {
-        "id": "25b1bcce.5af1ac",
+        "id": "3339a553.2bddd2",
         "type": "comment",
-        "z": "908ecefa.5bcb78",
-        "name": "Bloc_APImétéo",
-        "info": "Bloc météo! API utilisé = Openweathermap",
-        "x": 220,
-        "y": 660,
-        "wires": []
-    },
-    {
-        "id": "3c5de2a1.cdb82e",
-        "type": "comment",
-        "z": "908ecefa.5bcb78",
-        "name": "Collecte_Database",
+        "z": "639e9667.687fc8",
+        "name": "Interface utilisateur / graphiqe",
         "info": "Bloc qui traite les données stockée dans la base de données",
-        "x": 230,
-        "y": 420,
+        "x": 200,
+        "y": 460,
         "wires": []
     },
     {
-        "id": "c1aaa707.eacc08",
+        "id": "fe3ff8ba.5c92c8",
         "type": "ui_button",
-        "z": "908ecefa.5bcb78",
-        "name": "",
-        "group": "f9e70af1.7051",
+        "z": "639e9667.687fc8",
+        "name": "hierC1",
+        "group": "26b0787f.026c8",
         "order": 3,
-        "width": "6",
+        "width": "3",
         "height": "1",
         "passthru": false,
         "label": "Hier",
@@ -360,22 +410,22 @@
         "payload": "",
         "payloadType": "str",
         "topic": "hier",
-        "x": 190,
-        "y": 520,
+        "x": 130,
+        "y": 740,
         "wires": [
             [
-                "85b6a78.1072558"
+                "e62e1ca2.797d7"
             ]
         ]
     },
     {
-        "id": "b559789e.168448",
+        "id": "1fb8ca31.8f8e9e",
         "type": "ui_button",
-        "z": "908ecefa.5bcb78",
-        "name": "",
-        "group": "f9e70af1.7051",
+        "z": "639e9667.687fc8",
+        "name": "weekC1",
+        "group": "26b0787f.026c8",
         "order": 4,
-        "width": "6",
+        "width": "3",
         "height": "1",
         "passthru": false,
         "label": "Cette semaine",
@@ -386,21 +436,21 @@
         "payload": "",
         "payloadType": "str",
         "topic": "ajd",
-        "x": 220,
-        "y": 560,
+        "x": 140,
+        "y": 780,
         "wires": [
             [
-                "85b6a78.1072558"
+                "e62e1ca2.797d7"
             ]
         ]
     },
     {
-        "id": "789b4e52.b397b",
+        "id": "8107edbf.abb5e8",
         "type": "delay",
-        "z": "908ecefa.5bcb78",
+        "z": "639e9667.687fc8",
         "name": "",
         "pauseType": "delay",
-        "timeout": "3",
+        "timeout": "2",
         "timeoutUnits": "seconds",
         "rate": "1",
         "nbRateUnits": "1",
@@ -409,71 +459,1302 @@
         "randomLast": "5",
         "randomUnits": "seconds",
         "drop": false,
-        "x": 300,
-        "y": 340,
+        "x": 320,
+        "y": 780,
         "wires": [
             [
-                "85b6a78.1072558"
+                "e62e1ca2.797d7",
+                "94913f50.b79028",
+                "a8a488a3.d252b8",
+                "3e11c8f0.732eb"
             ]
         ]
     },
     {
-        "id": "65bcbd40.10266c",
-        "type": "mqtt-broker",
-        "z": "",
-        "name": "FirstMosquitto",
-        "broker": "192.168.1.222",
-        "port": "2222",
-        "clientid": "",
-        "usetls": false,
-        "compatmode": false,
-        "keepalive": "60",
-        "cleansession": true,
-        "birthTopic": "",
-        "birthQos": "0",
-        "birthPayload": "",
-        "closeTopic": "",
-        "closeQos": "0",
-        "closePayload": "",
-        "willTopic": "",
-        "willQos": "0",
-        "willPayload": ""
+        "id": "3b603cff.5fa7a4",
+        "type": "sqlite",
+        "z": "639e9667.687fc8",
+        "mydb": "8081a54f.e4adf",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 750,
+        "y": 700,
+        "wires": [
+            [
+                "29e59a47.7ebede"
+            ]
+        ]
     },
     {
-        "id": "332c0746.082dd8",
-        "type": "ui_group",
-        "z": "",
-        "name": "Control",
-        "tab": "3e28d568.12486a",
-        "order": 1,
-        "disp": true,
-        "width": "7",
-        "collapse": false
-    },
-    {
-        "id": "6eeb9f59.c9b318",
-        "type": "sqlitedb",
-        "z": "",
-        "db": "/home/pi/dbs/ConnectedHouse",
-        "mode": "RWC"
-    },
-    {
-        "id": "f9e70af1.7051",
-        "type": "ui_group",
-        "z": "",
-        "name": "Graphe",
-        "tab": "3e28d568.12486a",
+        "id": "c824d96.bad1ca8",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "ajdC2",
+        "group": "a55e2869.07e878",
         "order": 2,
-        "disp": true,
-        "width": "18",
-        "collapse": false
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Aujourd'hui",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "clicked",
+        "payloadType": "str",
+        "topic": "ajd",
+        "x": 130,
+        "y": 880,
+        "wires": [
+            [
+                "94913f50.b79028"
+            ]
+        ]
     },
     {
-        "id": "3e28d568.12486a",
-        "type": "ui_tab",
-        "z": "",
-        "name": "Vicky",
-        "icon": "dashboard",
-        "order": 2
+        "id": "a6938569.8d6688",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "hierC2",
+        "group": "a55e2869.07e878",
+        "order": 3,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Hier",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "hier",
+        "x": 130,
+        "y": 920,
+        "wires": [
+            [
+                "94913f50.b79028"
+            ]
+        ]
+    },
+    {
+        "id": "e156e024.ef6ec8",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "weekC2",
+        "group": "a55e2869.07e878",
+        "order": 4,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Cette semaine",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "ajd",
+        "x": 140,
+        "y": 960,
+        "wires": [
+            [
+                "94913f50.b79028"
+            ]
+        ]
+    },
+    {
+        "id": "48f9eea1.5b0da",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "everC2",
+        "group": "a55e2869.07e878",
+        "order": 5,
+        "width": "4",
+        "height": "1",
+        "passthru": false,
+        "label": "Depuis toujours",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "ajd",
+        "x": 140,
+        "y": 1000,
+        "wires": [
+            [
+                "94913f50.b79028"
+            ]
+        ]
+    },
+    {
+        "id": "1e526825.88dcf",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "everC1",
+        "group": "26b0787f.026c8",
+        "order": 5,
+        "width": "4",
+        "height": "1",
+        "passthru": false,
+        "label": "Depuis toujours",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "ever",
+        "x": 140,
+        "y": 820,
+        "wires": [
+            [
+                "e62e1ca2.797d7"
+            ]
+        ]
+    },
+    {
+        "id": "3bbe9a8c.6b6436",
+        "type": "ui_gauge",
+        "z": "639e9667.687fc8",
+        "name": "gauge capteur 2",
+        "group": "e82b4ce4.a2f89",
+        "order": 3,
+        "width": "8",
+        "height": "5",
+        "gtype": "gage",
+        "title": "humidité capteur 2",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#0cb103",
+            "#e6e600",
+            "#da0505"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 740,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "8c9264e2.c5689",
+        "type": "mqtt in",
+        "z": "639e9667.687fc8",
+        "name": "Capteur2-AP",
+        "topic": "JardinConnecte/humidity/data/capteur2",
+        "qos": "0",
+        "broker": "83d3b7cc.a7429",
+        "x": 170,
+        "y": 300,
+        "wires": [
+            [
+                "17c9b0d0.da989f",
+                "3bbe9a8c.6b6436"
+            ]
+        ]
+    },
+    {
+        "id": "cca22509.1cbc28",
+        "type": "mqtt in",
+        "z": "639e9667.687fc8",
+        "name": "Capteur3-AP",
+        "topic": "JardinConnecte/humidity/data/capteur3",
+        "qos": "0",
+        "broker": "83d3b7cc.a7429",
+        "x": 170,
+        "y": 240,
+        "wires": [
+            [
+                "fc609148.016c18",
+                "4d9ab0a8.b9c358"
+            ]
+        ]
+    },
+    {
+        "id": "17c9b0d0.da989f",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "InsertionC2",
+        "func": "var d = new Date();\nvar epoch = d.getTime();\nvar nepoch = (epoch /1000)+3600;\n\nvar newMsg = {\n \"topic\": \"INSERT INTO `HumidityTerre` (`emplacement`,`capteur`,`value`,`epoch`) VALUES ('2','humidity2',\"+ msg.payload + \" , \"+ nepoch + \" )\"\n}\n\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 300,
+        "wires": [
+            [
+                "71f49cdc.809cfc"
+            ]
+        ]
+    },
+    {
+        "id": "fc609148.016c18",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "InsertionC3",
+        "func": "var d = new Date();\nvar epoch = d.getTime();\nvar nepoch = (epoch /1000)+3600;\n\nvar newMsg = {\n \"topic\": \"INSERT INTO `HumidityTerre` (`emplacement`,`capteur`,`value`,`epoch`) VALUES ('3','humidity3',\"+ msg.payload + \" , \"+ nepoch + \" )\"\n}\n\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 220,
+        "wires": [
+            [
+                "71f49cdc.809cfc"
+            ]
+        ]
+    },
+    {
+        "id": "94913f50.b79028",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "SQLselectC2",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar Newepoch = (epoch/1000)+3600;\nvar output = [];\nif (msg.topic == \"ajd\"){\n    var enddate = Newepoch-Day;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='2' AND capteur='humidity2' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"hier\"){\n    var enddate = Newepoch-2*Day;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='2' AND capteur='humidity2' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"week\"){\n    var enddate = Newepoch-Week;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='2' AND capteur='humidity2' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"ever\"){\n    var enddate = Newepoch-Week;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='2' AND capteur='humidity2' AND epoch >= 930837600 AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}else{\n    var enddate = Newepoch-Day;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='2' AND capteur='humidity2' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\n\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 590,
+        "y": 880,
+        "wires": [
+            [
+                "be6df43c.10f328"
+            ]
+        ]
+    },
+    {
+        "id": "f635ab35.54734",
+        "type": "ui_chart",
+        "z": "639e9667.687fc8",
+        "name": "Graphique capteur 2",
+        "group": "a55e2869.07e878",
+        "order": 1,
+        "width": "14",
+        "height": "8",
+        "label": "Graphique de l'humidité du capteur 2",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "604800",
+        "cutout": "",
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": true,
+        "x": 1100,
+        "y": 880,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "8adfd10d.c2ced",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "FormeC2",
+        "func": "var series =[\"Taux d'humidité en %\", \"x\"];\nvar labels = [\"Labels\"];\nvar data = [];\n\nvar i, len, string;\n\nfor (i = 1, len = msg.payload.length, string = \"\"; i < len; i++) {\n    data.push({\"x\":msg.payload[i].timestamp, \"y\":Number(msg.payload[i].value)});\n}\n\ndata = [data];\n\nmsg.payload = [{series, data, labels}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 900,
+        "y": 880,
+        "wires": [
+            [
+                "f635ab35.54734"
+            ]
+        ]
+    },
+    {
+        "id": "be6df43c.10f328",
+        "type": "sqlite",
+        "z": "639e9667.687fc8",
+        "mydb": "8081a54f.e4adf",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 750,
+        "y": 880,
+        "wires": [
+            [
+                "8adfd10d.c2ced"
+            ]
+        ]
+    },
+    {
+        "id": "a8a488a3.d252b8",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "SQLselectC3",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar Newepoch = (epoch/1000)+3600;\n\nvar output = [];\nif (msg.topic == \"ajd\"){\n    var enddate = Newepoch-Day;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='3' AND capteur='humidity3' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"hier\"){\n    var enddate = Newepoch-2*Day;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='3' AND capteur='humidity3' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"week\"){\n    var enddate = Newepoch-Week;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='3' AND capteur='humidity3' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"ever\"){\n    var enddate = Newepoch-Week;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='3' AND capteur='humidity3' AND epoch >= 930837600 AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}else if (msg.topic == \"datepicker\"){\n    var numDate = msg.payload / 1000\n    var enddate = numDate.toString();\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='3' AND capteur='humidity3' AND epoch >= \" + enddate +\" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}else{\n    var enddate = Newepoch-Day;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='3' AND capteur='humidity3' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\n\n\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 590,
+        "y": 1060,
+        "wires": [
+            [
+                "8b3a1420.ccbba8"
+            ]
+        ]
+    },
+    {
+        "id": "741ecef.af04cb",
+        "type": "ui_chart",
+        "z": "639e9667.687fc8",
+        "name": "Graphique capteur 3",
+        "group": "a55e2869.07e878",
+        "order": 6,
+        "width": "14",
+        "height": "8",
+        "label": "Graphique de l'humidité du capteur 3",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "604800",
+        "cutout": "",
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": true,
+        "x": 1100,
+        "y": 1060,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "c6532a6.60adcd8",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "FormeC3",
+        "func": "var series =[\"Taux d'humidité en %\", \"x\"];\nvar labels = [\"Labels\"];\nvar data = [];\n\nvar i, len, string;\n\nfor (i = 1, len = msg.payload.length, string = \"\"; i < len; i++) {\n    data.push({\"x\":msg.payload[i].timestamp, \"y\":Number(msg.payload[i].value)});\n}\n\ndata = [data];\n\nmsg.payload = [{series, data, labels}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 900,
+        "y": 1060,
+        "wires": [
+            [
+                "741ecef.af04cb"
+            ]
+        ]
+    },
+    {
+        "id": "8b3a1420.ccbba8",
+        "type": "sqlite",
+        "z": "639e9667.687fc8",
+        "mydb": "8081a54f.e4adf",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 750,
+        "y": 1060,
+        "wires": [
+            [
+                "c6532a6.60adcd8"
+            ]
+        ]
+    },
+    {
+        "id": "45cee2af.2155f4",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "ajdC3",
+        "group": "a55e2869.07e878",
+        "order": 7,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Aujourd'hui",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "clicked",
+        "payloadType": "str",
+        "topic": "ajd",
+        "x": 130,
+        "y": 1060,
+        "wires": [
+            [
+                "a8a488a3.d252b8"
+            ]
+        ]
+    },
+    {
+        "id": "4d762fce.e36a78",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "hierC3",
+        "group": "a55e2869.07e878",
+        "order": 8,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Hier",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "hier",
+        "x": 130,
+        "y": 1100,
+        "wires": [
+            [
+                "a8a488a3.d252b8"
+            ]
+        ]
+    },
+    {
+        "id": "b0407e44.a3866",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "weekC3",
+        "group": "a55e2869.07e878",
+        "order": 9,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Cette semaine",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "ajd",
+        "x": 140,
+        "y": 1140,
+        "wires": [
+            [
+                "a8a488a3.d252b8"
+            ]
+        ]
+    },
+    {
+        "id": "598d6d8e.355ba4",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "everC3",
+        "group": "a55e2869.07e878",
+        "order": 10,
+        "width": "4",
+        "height": "1",
+        "passthru": false,
+        "label": "Depuis toujours",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "ajd",
+        "x": 140,
+        "y": 1180,
+        "wires": [
+            [
+                "a8a488a3.d252b8"
+            ]
+        ]
+    },
+    {
+        "id": "336b2c0b.48ece4",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "LastvalueSQLselectC1",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar Newepoch = (epoch/1000)+3600;\nvar output = [];\noutput.push({ topic: \"SELECT max(timestamp) as timestamp FROM 'HumidityTerre' WHERE capteur='humidity1'\"});\n\n\n\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 960,
+        "y": 400,
+        "wires": [
+            [
+                "fd61a2fc.469388"
+            ]
+        ]
+    },
+    {
+        "id": "c2f4210e.66d32",
+        "type": "delay",
+        "z": "639e9667.687fc8",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 380,
+        "y": 420,
+        "wires": [
+            [
+                "336b2c0b.48ece4"
+            ]
+        ]
+    },
+    {
+        "id": "e62e05e6.a8d97",
+        "type": "ui_text",
+        "z": "639e9667.687fc8",
+        "group": "e82b4ce4.a2f89",
+        "order": 2,
+        "width": "6",
+        "height": "1",
+        "name": "",
+        "label": "Dernière mesure :",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "x": 1630,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "f4c3fd76.ff9a58",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "FormeLastupdateC1",
+        "func": "var result = msg.payload[0].timestamp;\nmsg.payload = result;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1380,
+        "y": 400,
+        "wires": [
+            [
+                "e62e05e6.a8d97"
+            ]
+        ]
+    },
+    {
+        "id": "cc4a0612.7fbd78",
+        "type": "inject",
+        "z": "639e9667.687fc8",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 780,
+        "y": 320,
+        "wires": [
+            [
+                "336b2c0b.48ece4",
+                "206810fe.436c58",
+                "c9b4929f.9cc72"
+            ]
+        ]
+    },
+    {
+        "id": "fd61a2fc.469388",
+        "type": "sqlite",
+        "z": "639e9667.687fc8",
+        "mydb": "8081a54f.e4adf",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 1190,
+        "y": 400,
+        "wires": [
+            [
+                "f4c3fd76.ff9a58"
+            ]
+        ]
+    },
+    {
+        "id": "131b9b66.38d27d",
+        "type": "delay",
+        "z": "639e9667.687fc8",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 380,
+        "y": 340,
+        "wires": [
+            [
+                "206810fe.436c58"
+            ]
+        ]
+    },
+    {
+        "id": "7d46ffac.757788",
+        "type": "delay",
+        "z": "639e9667.687fc8",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 360,
+        "y": 260,
+        "wires": [
+            [
+                "c9b4929f.9cc72"
+            ]
+        ]
+    },
+    {
+        "id": "206810fe.436c58",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "LastvalueSQLselectC2",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar Newepoch = (epoch/1000)+3600;\nvar output = [];\noutput.push({ topic: \"SELECT max(timestamp) as timestamp FROM 'HumidityTerre' WHERE capteur='humidity2'\"});\n\n\n\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 960,
+        "y": 340,
+        "wires": [
+            [
+                "a9a6ec43.6f31"
+            ]
+        ]
+    },
+    {
+        "id": "c9b4929f.9cc72",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "LastvalueSQLselectC3",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar Newepoch = (epoch/1000)+3600;\nvar output = [];\noutput.push({ topic: \"SELECT max(timestamp) as timestamp FROM 'HumidityTerre' WHERE capteur='humidity3'\"});\n\n\n\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 960,
+        "y": 220,
+        "wires": [
+            [
+                "3bca9d34.4ded0a"
+            ]
+        ]
+    },
+    {
+        "id": "a9a6ec43.6f31",
+        "type": "sqlite",
+        "z": "639e9667.687fc8",
+        "mydb": "8081a54f.e4adf",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 1190,
+        "y": 340,
+        "wires": [
+            [
+                "55c434b6.0bec34"
+            ]
+        ]
+    },
+    {
+        "id": "3bca9d34.4ded0a",
+        "type": "sqlite",
+        "z": "639e9667.687fc8",
+        "mydb": "8081a54f.e4adf",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 1190,
+        "y": 220,
+        "wires": [
+            [
+                "aaf13bd8.a83ed8"
+            ]
+        ]
+    },
+    {
+        "id": "55c434b6.0bec34",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "FormeLastupdateC2",
+        "func": "var result = msg.payload[0].timestamp;\nmsg.payload = result;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1380,
+        "y": 340,
+        "wires": [
+            [
+                "8d32136a.8c493"
+            ]
+        ]
+    },
+    {
+        "id": "aaf13bd8.a83ed8",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "FormeLastupdateC2",
+        "func": "var result = msg.payload[0].timestamp;\nmsg.payload = result;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1380,
+        "y": 220,
+        "wires": [
+            [
+                "703340a2.8ec97"
+            ]
+        ]
+    },
+    {
+        "id": "8d32136a.8c493",
+        "type": "ui_text",
+        "z": "639e9667.687fc8",
+        "group": "e82b4ce4.a2f89",
+        "order": 4,
+        "width": "6",
+        "height": "1",
+        "name": "",
+        "label": "Dernière mesure :",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "x": 1630,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "703340a2.8ec97",
+        "type": "ui_text",
+        "z": "639e9667.687fc8",
+        "group": "808ec955.b7b7c",
+        "order": 2,
+        "width": "6",
+        "height": "1",
+        "name": "",
+        "label": "Dernière mesure :",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "x": 1630,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "3e11c8f0.732eb",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "SQLselectCs",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar Newepoch = (epoch/1000)+3600;\nvar output = [];\nif (msg.topic == \"ajd\"){\n    var enddate = Newepoch-Day;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='0' AND capteur='humidity' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"hier\"){\n    var enddate = Newepoch-2*Day;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='0' AND capteur='humidity' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"week\"){\n    var enddate = Newepoch-Week;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='0' AND capteur='humidity' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\nelse if (msg.topic == \"ever\"){\n    var enddate = Newepoch-Week;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='0' AND capteur='humidity' AND epoch >= 930837600 AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}else{\n    var enddate = Newepoch-Day;\n    output.push({ topic: \"SELECT * FROM HumidityTerre WHERE emplacement='0' AND capteur='humidity' AND epoch >= \" + enddate + \" AND epoch <= \" + Newepoch + \" ORDER BY timestamp\"});\n}\n\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 590,
+        "y": 520,
+        "wires": [
+            [
+                "691be4a.41e1e9c"
+            ]
+        ]
+    },
+    {
+        "id": "a2938a81.b7df08",
+        "type": "ui_chart",
+        "z": "639e9667.687fc8",
+        "name": "Graphique capteur 4",
+        "group": "26b0787f.026c8",
+        "order": 6,
+        "width": "14",
+        "height": "8",
+        "label": "Graphique de l'humidité moyenne",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "604800",
+        "cutout": "",
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": true,
+        "x": 1100,
+        "y": 520,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "eac30836.cc3c48",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "FormeCs",
+        "func": "var series =[\"Taux d'humidité en %\", \"x\"];\nvar labels = [\"Labels\"];\nvar data = [];\n\nvar i, len, string;\n\nfor (i = 1, len = msg.payload.length, string = \"\"; i < len; i++) {\n    data.push({\"x\":msg.payload[i].timestamp, \"y\":Number(msg.payload[i].value)});\n}\n\ndata = [data];\n\nmsg.payload = [{series, data, labels}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 900,
+        "y": 520,
+        "wires": [
+            [
+                "a2938a81.b7df08"
+            ]
+        ]
+    },
+    {
+        "id": "691be4a.41e1e9c",
+        "type": "sqlite",
+        "z": "639e9667.687fc8",
+        "mydb": "8081a54f.e4adf",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 750,
+        "y": 520,
+        "wires": [
+            [
+                "eac30836.cc3c48"
+            ]
+        ]
+    },
+    {
+        "id": "11d905a9.536312",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "ajdCs",
+        "group": "26b0787f.026c8",
+        "order": 7,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Aujourd'hui",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "clicked",
+        "payloadType": "str",
+        "topic": "ajd",
+        "x": 130,
+        "y": 520,
+        "wires": [
+            [
+                "3e11c8f0.732eb"
+            ]
+        ]
+    },
+    {
+        "id": "edcc1498.632d28",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "hierCs",
+        "group": "26b0787f.026c8",
+        "order": 8,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Hier",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "hier",
+        "x": 130,
+        "y": 560,
+        "wires": [
+            [
+                "3e11c8f0.732eb"
+            ]
+        ]
+    },
+    {
+        "id": "264ff091.c8339",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "weekCs",
+        "group": "26b0787f.026c8",
+        "order": 9,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "label": "Cette semaine",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "ajd",
+        "x": 140,
+        "y": 600,
+        "wires": [
+            [
+                "3e11c8f0.732eb"
+            ]
+        ]
+    },
+    {
+        "id": "7d33b08c.65c978",
+        "type": "ui_button",
+        "z": "639e9667.687fc8",
+        "name": "everCs",
+        "group": "26b0787f.026c8",
+        "order": 10,
+        "width": "4",
+        "height": "1",
+        "passthru": false,
+        "label": "Depuis toujours",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#4b993d",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "ajd",
+        "x": 140,
+        "y": 640,
+        "wires": [
+            [
+                "3e11c8f0.732eb"
+            ]
+        ]
+    },
+    {
+        "id": "600fe7bf.b61fc8",
+        "type": "inject",
+        "z": "639e9667.687fc8",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 180,
+        "y": 100,
+        "wires": [
+            [
+                "a939e254.2096"
+            ]
+        ]
+    },
+    {
+        "id": "2976b398.7bca44",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "InsertionMoyenne",
+        "func": "var d = new Date();\nvar epoch = d.getTime();\nvar nepoch = (epoch /1000);\nvar newMsg = {\n \"topic\": \"INSERT INTO `HumidityTerre` (`emplacement`,`capteur`,`value`,`epoch`) VALUES ('0','humidity',\"+ msg.payload + \" , \"+ nepoch + \" )\"\n}\n\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 930,
+        "y": 100,
+        "wires": [
+            [
+                "c481ddf3.5d61f8",
+                "3d552305.a2fecc"
+            ]
+        ]
+    },
+    {
+        "id": "a939e254.2096",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "ReqMoyenne",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar Newepoch = (epoch/1000)+3600;\nvar output = [];\noutput.push({ topic: \"SELECT value,max(timestamp) as timestamp FROM 'HumidityTerre' WHERE capteur='humidity3' UNION SELECT value,max(timestamp) as timestamp FROM 'HumidityTerre' WHERE capteur='humidity2'  UNION SELECT value,max(timestamp) as timestamp FROM 'HumidityTerre' WHERE capteur='humidity1'\"\n    \n});\n\n\n\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 470,
+        "y": 100,
+        "wires": [
+            [
+                "885b42b8.6ed9f"
+            ]
+        ]
+    },
+    {
+        "id": "c481ddf3.5d61f8",
+        "type": "debug",
+        "z": "639e9667.687fc8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 930,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "4d9ab0a8.b9c358",
+        "type": "ui_gauge",
+        "z": "639e9667.687fc8",
+        "name": "gauge capteur 3",
+        "group": "808ec955.b7b7c",
+        "order": 1,
+        "width": "8",
+        "height": "5",
+        "gtype": "gage",
+        "title": "humidité capteur 3",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#0cb103",
+            "#e6e600",
+            "#da0505"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 740,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "885b42b8.6ed9f",
+        "type": "sqlite",
+        "z": "639e9667.687fc8",
+        "mydb": "8081a54f.e4adf",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 630,
+        "y": 100,
+        "wires": [
+            [
+                "c481ddf3.5d61f8",
+                "10f7dc45.3a238c"
+            ]
+        ]
+    },
+    {
+        "id": "10f7dc45.3a238c",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "Moyenne",
+        "func": "var resultat = 0;\nfor (var i = 0; i<=2; i++){\n    resultat += msg.payload[i].value;\n}\nmsg.payload = Math.round(resultat/3);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 760,
+        "y": 100,
+        "wires": [
+            [
+                "2976b398.7bca44",
+                "a2f39abc.477368",
+                "1c5a156c.dbd9db"
+            ]
+        ]
+    },
+    {
+        "id": "3d552305.a2fecc",
+        "type": "sqlite",
+        "z": "639e9667.687fc8",
+        "mydb": "8081a54f.e4adf",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 1090,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "246d3623.3ecbb2",
+        "type": "comment",
+        "z": "639e9667.687fc8",
+        "name": "Changer!!",
+        "info": "mettre une répétition!!\nGraphiqe & gauge de la moyenne de toute les courbes",
+        "x": 140,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "a2f39abc.477368",
+        "type": "ui_gauge",
+        "z": "639e9667.687fc8",
+        "name": "gauge capteur moy",
+        "group": "808ec955.b7b7c",
+        "order": 3,
+        "width": "8",
+        "height": "5",
+        "gtype": "gage",
+        "title": "humidité moyenne du jardin",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#0cb103",
+            "#e6e600",
+            "#da0505"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 930,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "1c5a156c.dbd9db",
+        "type": "delay",
+        "z": "639e9667.687fc8",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 880,
+        "y": 180,
+        "wires": [
+            [
+                "a8e37ef1.66157"
+            ]
+        ]
+    },
+    {
+        "id": "a8e37ef1.66157",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "LastvalueSQLselectMoyenne",
+        "func": "var Week  = 604800 ; //7 Days\nvar Day   =  86400 ; // 1 Days\nvar d = new Date();\nvar epoch = d.getTime();\nvar Newepoch = (epoch/1000)+3600;\nvar output = [];\noutput.push({ topic: \"SELECT max(timestamp) as timestamp FROM 'HumidityTerre' WHERE capteur='humidity'\"});\n\n\n\n\noutput[output.length-1].complete=true;\nreturn [ output ]; \n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1100,
+        "y": 180,
+        "wires": [
+            [
+                "f3ec261b.e1ef68"
+            ]
+        ]
+    },
+    {
+        "id": "f3ec261b.e1ef68",
+        "type": "sqlite",
+        "z": "639e9667.687fc8",
+        "mydb": "8081a54f.e4adf",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB",
+        "x": 1310,
+        "y": 180,
+        "wires": [
+            [
+                "4e41e02c.f3cea"
+            ]
+        ]
+    },
+    {
+        "id": "4e41e02c.f3cea",
+        "type": "function",
+        "z": "639e9667.687fc8",
+        "name": "FormeLastupdateC2",
+        "func": "var result = msg.payload[0].timestamp;\nmsg.payload = result;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1500,
+        "y": 180,
+        "wires": [
+            [
+                "e26d99ad.817a1"
+            ]
+        ]
+    },
+    {
+        "id": "e26d99ad.817a1",
+        "type": "ui_text",
+        "z": "639e9667.687fc8",
+        "group": "808ec955.b7b7c",
+        "order": 4,
+        "width": "6",
+        "height": "1",
+        "name": "",
+        "label": "Dernière mesure :",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "x": 1730,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "4644ba0f.5c2c54",
+        "type": "ui_date_picker",
+        "z": "639e9667.687fc8",
+        "name": "Selectionner une date",
+        "label": "date",
+        "group": "e371a649.31dbe8",
+        "order": 1,
+        "width": "5",
+        "height": "2",
+        "passthru": false,
+        "topic": "datepicker",
+        "x": 380,
+        "y": 840,
+        "wires": [
+            [
+                "a8a488a3.d252b8",
+                "94913f50.b79028",
+                "e62e1ca2.797d7",
+                "3e11c8f0.732eb"
+            ]
+        ]
     }
 ]
